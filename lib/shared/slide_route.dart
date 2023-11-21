@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-PageRouteBuilder<dynamic> slideRoute(Widget screen) {
+PageRouteBuilder<dynamic> slideRoute({required Widget screen}) {
   return PageRouteBuilder(
     transitionsBuilder: (context, animation, secondaryAnimation, child) =>
         SlideTransition(

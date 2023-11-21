@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:tiktok_clone/constants/gaps.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
+import 'package:tiktok_clone/features/authentication/email_screen.dart';
+import 'package:tiktok_clone/features/authentication/widgets/form_button.dart';
+import 'package:tiktok_clone/shared/slide_route.dart';
 
 class UserNameScreen extends StatefulWidget {
   const UserNameScreen({super.key});
@@ -20,6 +23,18 @@ class _UserNameScreenState extends State<UserNameScreen> {
       setState(() => _username = _usernamecontroller.text);
     });
   }
+
+  @override
+  void dispose() {
+    _usernamecontroller.dispose();
+    super.dispose();
+  }
+
+  void _onTextTap() => _username.isNotEmpty
+      ? Navigator.of(context).push(
+          slideRoute(screen: const EmailScreen()),
+        )
+      : null;
 
   @override
   Widget build(BuildContext context) {
@@ -65,29 +80,9 @@ class _UserNameScreenState extends State<UserNameScreen> {
               cursorColor: Theme.of(context).primaryColor,
             ),
             Gaps.v16,
-            FractionallySizedBox(
-              widthFactor: 1,
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 300),
-                padding: const EdgeInsets.symmetric(vertical: Sizes.size16),
-                decoration: BoxDecoration(
-                  color: _username.isEmpty
-                      ? Colors.grey.shade300
-                      : Theme.of(context).primaryColor,
-                  borderRadius: BorderRadius.circular(Sizes.size5),
-                ),
-                child: const Text(
-                  "Next",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w600,
-                  ),
-
-                  /// #4.4 05:56 : controller
-                ),
-              ),
-            )
+            GestureDetector(
+                onTap: _onTextTap,
+                child: FormButton(disabled: _username.isEmpty))
           ],
         ),
       ),

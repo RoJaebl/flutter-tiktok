@@ -11,11 +11,11 @@ class SignUpScreen extends StatelessWidget {
   const SignUpScreen({super.key});
 
   _onLoginTap(BuildContext context) => Navigator.of(context).push(
-        slideRoute(const LoginScreen()),
+        slideRoute(screen: const LoginScreen()),
       );
 
   _onEmailTap(BuildContext context) => Navigator.of(context).push(
-        slideRoute(const UserNameScreen()),
+        slideRoute(screen: const UserNameScreen()),
       );
 
   @override
