@@ -1,0 +1,13 @@
+{
+  "cmake.sourceDirectory": "E:/PHN/code/study/flutter-tour/tiktok/windows/flutter",
+  "configurations": [
+    {
+      "name": "Admin Flutter Web",
+      "request": "launch",
+      "type": "dart",
+      "deviceId": "chrome",
+      "program": "Admin/lib/main.dart",
+      "args": ["--web-port", "51190"]
+    }
+  ]
+}
