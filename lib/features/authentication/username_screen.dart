@@ -59,7 +59,7 @@ class _UserNameScreenState extends State<UserNameScreen> {
             ),
             Gaps.v8,
             const Text(
-              "You can always change this later.",
+              "You can always change this later",
               style: TextStyle(
                 fontSize: Sizes.size16,
                 color: Colors.black54,
