@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tiktok_clone/constants/gaps.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
+import 'package:tiktok_clone/features/onboarding/widgets/interest_buttin.dart';
 
 const interests = [
   "Daily Life",
@@ -43,76 +44,84 @@ const interests = [
   "Home & Garden",
 ];
 
-class InterestScreen extends StatelessWidget {
+class InterestScreen extends StatefulWidget {
   const InterestScreen({super.key});
+
+  @override
+  State<InterestScreen> createState() => _InterestScreenState();
+}
+
+class _InterestScreenState extends State<InterestScreen> {
+  final ScrollController _scrollcontroller = ScrollController();
+  bool _showTitle = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollcontroller.addListener(() {
+      _onScroll();
+    });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  void _onScroll() =>
+      setState(() => _showTitle = _scrollcontroller.offset > 100);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: const Text("Choose your interests"),
+        title: AnimatedOpacity(
+          opacity: _showTitle ? 1 : 0,
+          duration: const Duration(milliseconds: 200),
+          child: const Text("Choose your interests"),
+        ),
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.only(
-            bottom: Sizes.size16,
-            left: Sizes.size24,
-            right: Sizes.size24,
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Gaps.v32,
-              const Text(
-                "Choose your interests",
-                style: TextStyle(
-                  fontSize: Sizes.size40,
-                  fontWeight: FontWeight.bold,
+      body: Scrollbar(
+        controller: _scrollcontroller,
+        child: SingleChildScrollView(
+          controller: _scrollcontroller,
+          child: Padding(
+            padding: const EdgeInsets.only(
+              bottom: Sizes.size16,
+              left: Sizes.size24,
+              right: Sizes.size24,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Gaps.v32,
+                const Text(
+                  "Choose your interests",
+                  style: TextStyle(
+                    fontSize: Sizes.size40,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-              ),
-              Gaps.v20,
-              const Text(
-                "Get better video recommendations",
-                style: TextStyle(
-                  fontSize: Sizes.size20,
-                  fontWeight: FontWeight.bold,
+                Gaps.v20,
+                const Text(
+                  "Get better video recommendations",
+                  style: TextStyle(
+                    fontSize: Sizes.size20,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-              ),
-              Gaps.v64,
-              Wrap(
-                runSpacing: Sizes.size14 + Sizes.size1,
-                spacing: Sizes.size14 + Sizes.size1,
-                children: [
-                  for (var interest in interests)
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: Sizes.size16,
-                        horizontal: Sizes.size24,
-                      ),
-                      decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(Sizes.size32),
-                          border: Border.all(
-                            color: Colors.black.withOpacity(0.1),
-                          ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.05),
-                              blurRadius: 5,
-                              spreadRadius: 5,
-                            )
-                          ]),
-                      child: Text(
-                        interest,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    )
-                ],
-              )
-            ],
+                Gaps.v64,
+                Wrap(
+                  runSpacing: Sizes.size14 + Sizes.size1,
+                  spacing: Sizes.size14 + Sizes.size1,
+                  children: [
+                    for (var interest in interests)
+                      InterestButton(interest: interest)
+                  ],
+                )
+              ],
+            ),
           ),
         ),
       ),
