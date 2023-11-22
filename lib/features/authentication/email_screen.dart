@@ -38,10 +38,12 @@ class _EmailScreenState extends State<EmailScreen> {
 
   void _onScaffoldTap() => FocusScope.of(context).unfocus();
 
-  void _onSubmit() {
-    if (_email.isEmpty || _emailValidText() != null) return;
-    Navigator.push(context, slideRoute(screen: const PasswordScreen()));
-  }
+  void _onSubmit() => _email.isEmpty || _emailValidText() != null
+      ? Navigator.push(
+          context,
+          slideRoute(screen: const PasswordScreen()),
+        )
+      : null;
 
   @override
   Widget build(BuildContext context) {
