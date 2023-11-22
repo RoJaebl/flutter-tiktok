@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:tiktok_clone/constants/gaps.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
 import 'package:tiktok_clone/features/authentication/widgets/form_button.dart';
+import 'package:tiktok_clone/features/onboarding/interest_screen.dart';
+import 'package:tiktok_clone/shared/slide_route.dart';
 
 class LoginFormScreen extends StatefulWidget {
   const LoginFormScreen({super.key});
@@ -18,7 +20,9 @@ class _LoginFormScreenState extends State<LoginFormScreen> {
     if (_formKey.currentState != null) {
       if (_formKey.currentState!.validate()) {
         _formKey.currentState!.save();
-        print(formDate);
+        Navigator.of(context).push(
+          slideRoute(screen: const InterestScreen()),
+        );
       }
     }
   }
@@ -28,7 +32,7 @@ class _LoginFormScreenState extends State<LoginFormScreen> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: _onScaffoldTap,
+      onTap: _onSubmitTap,
       child: Scaffold(
         appBar: AppBar(
           title: const Text("Log in"),
@@ -49,6 +53,9 @@ class _LoginFormScreenState extends State<LoginFormScreen> {
                           borderSide: BorderSide(color: Colors.grey.shade400)),
                     ),
                     validator: (value) {
+                      if (value != null && value.isEmpty) {
+                        return "Plase write your email";
+                      }
                       return null;
                     },
                     onSaved: (newValue) {
@@ -66,6 +73,9 @@ class _LoginFormScreenState extends State<LoginFormScreen> {
                           borderSide: BorderSide(color: Colors.grey.shade400)),
                     ),
                     validator: (value) {
+                      if (value != null && value.isEmpty) {
+                        return "Plase write your password";
+                      }
                       return null;
                     },
                     onSaved: (newValue) {
