@@ -7,7 +7,7 @@
       "type": "dart",
       "deviceId": "chrome",
       "program": "Admin/lib/main.dart",
-      "args": ["--web-port", "51190"]
+      "args": ["--web-port", "8080"]
     }
   ]
 }

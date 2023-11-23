@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:tiktok_clone/constants/gaps.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
+import 'package:tiktok_clone/features/onboarding/tutorial_screen.dart';
 import 'package:tiktok_clone/features/onboarding/widgets/interest_buttin.dart';
+import 'package:tiktok_clone/shared/slide_route.dart';
 
 const interests = [
   "Daily Life",
@@ -71,6 +73,10 @@ class _InterestScreenState extends State<InterestScreen> {
   void _onScroll() =>
       setState(() => _showTitle = _scrollcontroller.offset > 100);
 
+  void _onNextTap() {
+    Navigator.push(context, slideRoute(screen: const TutorialScreen()));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -133,21 +139,24 @@ class _InterestScreenState extends State<InterestScreen> {
           right: Sizes.size24,
         ),
         elevation: 1,
-        child: Container(
-          decoration: BoxDecoration(
-            color: Theme.of(context).primaryColor,
-          ),
-          child: const Stack(
-            alignment: Alignment.center,
-            children: [
-              Text(
-                "Next",
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: Sizes.size16,
+        child: GestureDetector(
+          onTap: _onNextTap,
+          child: Container(
+            decoration: BoxDecoration(
+              color: Theme.of(context).primaryColor,
+            ),
+            child: const Stack(
+              alignment: Alignment.center,
+              children: [
+                Text(
+                  "Next",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: Sizes.size16,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
