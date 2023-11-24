@@ -29,9 +29,8 @@ class _BirthDayScreenState extends State<BirthDayScreen> {
     super.dispose();
   }
 
-  void _onTextTap() => Navigator.of(context).push(
-        slideRoute(screen: const InterestScreen()),
-      );
+  void _onTextTap() => Navigator.of(context).pushAndRemoveUntil(
+      slideRoute(screen: const InterestScreen()), (route) => false);
 
   void _setTextFieldDate(DateTime date) =>
       _birthdaycontroller.value = TextEditingValue(

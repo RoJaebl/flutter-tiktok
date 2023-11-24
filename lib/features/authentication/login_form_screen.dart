@@ -20,9 +20,8 @@ class _LoginFormScreenState extends State<LoginFormScreen> {
     if (_formKey.currentState != null) {
       if (_formKey.currentState!.validate()) {
         _formKey.currentState!.save();
-        Navigator.of(context).push(
-          slideRoute(screen: const InterestScreen()),
-        );
+        Navigator.of(context).pushAndRemoveUntil(
+            slideRoute(screen: const InterestScreen()), (route) => false);
       }
     }
   }
