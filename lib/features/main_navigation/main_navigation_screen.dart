@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:tiktok_clone/constants/gaps.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
 import 'package:tiktok_clone/features/main_navigation/widgets/nav_tab.dart';
-import 'package:tiktok_clone/features/main_navigation/widgets/sfl_screen.dart';
+import 'package:tiktok_clone/features/main_navigation/widgets/post_video_button.dart';
+import 'package:tiktok_clone/shared/slide_route.dart';
 
 class MainNavigationScreen extends StatefulWidget {
   const MainNavigationScreen({super.key});
@@ -13,11 +15,30 @@ class MainNavigationScreen extends StatefulWidget {
 
 class _MainNavigationScreenState extends State<MainNavigationScreen> {
   int _selectedIndex = 0;
+  bool _postAnimate = false;
+
+  void _onPostTapDown(TapDownDetails downDetails) =>
+      setState(() => _postAnimate = false);
+
+  void _onPostTapUp(TapUpDetails upDetails) =>
+      setState(() => _postAnimate = true);
 
   void _onTap(int index) {
     setState(() {
       _selectedIndex = index;
     });
+  }
+
+  void _onPostVideoButtonTap() {
+    Navigator.of(context).push(
+      slideRoute(
+          screen: Scaffold(
+        appBar: AppBar(
+          centerTitle: true,
+          title: const Text("Record video"),
+        ),
+      )),
+    );
   }
 
   @override
@@ -27,20 +48,20 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
         children: [
           Offstage(
             offstage: _selectedIndex != 0,
-            child: const SflScreen(),
+            child: Container(),
           ),
           Offstage(
             offstage: _selectedIndex != 1,
-            child: const SflScreen(),
+            child: Container(),
           ),
           Container(),
           Offstage(
             offstage: _selectedIndex != 3,
-            child: const SflScreen(),
+            child: Container(),
           ),
           Offstage(
             offstage: _selectedIndex != 4,
-            child: const SflScreen(),
+            child: Container(),
           ),
         ],
       ),
@@ -65,6 +86,14 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
                 selectedIcon: FontAwesomeIcons.solidCompass,
                 onTap: () => _onTap(1),
               ),
+              Gaps.h24,
+              GestureDetector(
+                onTapUp: _onPostTapUp,
+                onTapDown: _onPostTapDown,
+                onTap: _onPostVideoButtonTap,
+                child: PostVideoButton(animate: _postAnimate),
+              ),
+              Gaps.h24,
               NavTab(
                 text: "Inbox",
                 isSelected: _selectedIndex == 3,
