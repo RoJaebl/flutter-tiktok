@@ -14,7 +14,7 @@ class PostVideoButton extends StatelessWidget {
       children: [
         AnimatedPositioned(
           duration: const Duration(milliseconds: 70),
-          right: animate ? 20 : 23,
+          right: animate ? 23 : 20,
           child: Container(
             height: 33,
             width: 25,
@@ -31,7 +31,7 @@ class PostVideoButton extends StatelessWidget {
         ),
         AnimatedPositioned(
           duration: const Duration(milliseconds: 70),
-          left: animate ? 20 : 23,
+          left: animate ? 23 : 20,
           child: Container(
             height: 33,
             width: 25,

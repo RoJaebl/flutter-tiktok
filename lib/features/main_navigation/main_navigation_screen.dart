@@ -4,6 +4,7 @@ import 'package:tiktok_clone/constants/gaps.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
 import 'package:tiktok_clone/features/main_navigation/widgets/nav_tab.dart';
 import 'package:tiktok_clone/features/main_navigation/widgets/post_video_button.dart';
+import 'package:tiktok_clone/features/videos/video_timeline_screen.dart';
 import 'package:tiktok_clone/shared/slide_route.dart';
 
 class MainNavigationScreen extends StatefulWidget {
@@ -17,19 +18,17 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
   int _selectedIndex = 0;
   bool _postAnimate = false;
 
-  void _onPostTapDown(TapDownDetails downDetails) =>
-      setState(() => _postAnimate = false);
-
-  void _onPostTapUp(TapUpDetails upDetails) =>
-      setState(() => _postAnimate = true);
-
   void _onTap(int index) {
     setState(() {
       _selectedIndex = index;
     });
   }
 
+  void _onPostVideoButtonDown(TapDownDetails downDetails) =>
+      setState(() => _postAnimate = true);
+
   void _onPostVideoButtonTap() {
+    setState(() => _postAnimate = false);
     Navigator.of(context).push(
       slideRoute(
           screen: Scaffold(
@@ -48,7 +47,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
         children: [
           Offstage(
             offstage: _selectedIndex != 0,
-            child: Container(),
+            child: const VideoTimelineScreen(),
           ),
           Offstage(
             offstage: _selectedIndex != 1,
@@ -88,8 +87,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
               ),
               Gaps.h24,
               GestureDetector(
-                onTapUp: _onPostTapUp,
-                onTapDown: _onPostTapDown,
+                onTapDown: _onPostVideoButtonDown,
                 onTap: _onPostVideoButtonTap,
                 child: PostVideoButton(animate: _postAnimate),
               ),
