@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tiktok_clone/features/videos/widgets/video_post.dart';
 
 class VideoTimelineScreen extends StatefulWidget {
   const VideoTimelineScreen({super.key});
@@ -9,50 +10,42 @@ class VideoTimelineScreen extends StatefulWidget {
 
 class _VideoTimelineScreenState extends State<VideoTimelineScreen> {
   int _itemCount = 4;
-  final PageController _pagecontroller = PageController();
-
-  List<Color> colors = [
-    Colors.blue,
-    Colors.teal,
-    Colors.yellow,
-    Colors.pink,
-  ];
+  final PageController _pageController = PageController();
+  final Duration _scrollDuration = const Duration(milliseconds: 150);
+  final Curve _scrollCurve = Curves.linear;
 
   void _onPageChanged(int page) {
-    _pagecontroller.animateToPage(
+    _pageController.animateToPage(
       page,
-      duration: const Duration(milliseconds: 150),
-      curve: Curves.linear,
+      duration: _scrollDuration,
+      curve: _scrollCurve,
     );
-    if (page == colors.length - 1) {
+    if (page == _itemCount - 1) {
       _itemCount += 4;
-      colors.addAll([
-        Colors.blue,
-        Colors.teal,
-        Colors.yellow,
-        Colors.pink,
-      ]);
       setState(() {});
     }
+  }
+
+  void _onVideoFinished() => _pageController.nextPage(
+        duration: _scrollDuration,
+        curve: _scrollCurve,
+      );
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return PageView.builder(
-      controller: _pagecontroller,
+      controller: _pageController,
       scrollDirection: Axis.vertical,
       itemCount: _itemCount,
       onPageChanged: _onPageChanged,
-      itemBuilder: (context, index) => Container(
-        color: colors[index],
-        child: Center(
-            child: Text(
-          "Screen $index",
-          style: const TextStyle(
-            fontSize: 68,
-          ),
-        )),
-      ),
+      itemBuilder: (context, index) =>
+          VideoPost(onVideoFinished: _onVideoFinished),
     );
   }
 }
