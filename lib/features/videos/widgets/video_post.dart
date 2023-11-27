@@ -35,7 +35,7 @@ class _VideoPostState extends State<VideoPost>
     }
   }
 
-  /// Player를 초기화 및 상태 변경되면 호출할 이밴트 등록
+  /// Player를 초기화 및 이벤트 등록
   void _initVideoPlayer() async {
     await _videoPlayercontroller.initialize();
     _videoPlayercontroller.addListener(
@@ -44,6 +44,7 @@ class _VideoPostState extends State<VideoPost>
     setState(() {});
   }
 
+  /// AnimateController를 초기화 및 이벤트 등록
   void _initAnimateController() {
     _animationController = AnimationController(
       vsync: this,
@@ -52,9 +53,6 @@ class _VideoPostState extends State<VideoPost>
       value: 1.5,
       duration: _animationDuration,
     );
-    _animationController.addListener(() {
-      setState(() {});
-    });
   }
 
   @override
@@ -112,11 +110,15 @@ class _VideoPostState extends State<VideoPost>
           Positioned.fill(
             child: IgnorePointer(
               child: Center(
-                child: Transform.scale(
-                  scale: _animationController.value,
+                child: AnimatedBuilder(
+                  animation: _animationController,
+                  builder: (context, child) => Transform.scale(
+                    scale: _animationController.value,
+                    child: child,
+                  ),
                   child: AnimatedOpacity(
                     duration: _animationDuration,
-                    opacity: _isPaused ? 0.7 : 0,
+                    opacity: _isPaused ? 0.8 : 0,
                     child: const FaIcon(
                       FontAwesomeIcons.play,
                       color: Colors.white,
