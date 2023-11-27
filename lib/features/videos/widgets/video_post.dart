@@ -25,6 +25,7 @@ class _VideoPostState extends State<VideoPost>
   final Duration _animationDuration = const Duration(milliseconds: 200);
   late final AnimationController _animationController;
 
+  /// Player가 초기화 되고 영상을 마치면 다음 페이지 콜백
   void _onVideoChange() {
     if (_videoPlayercontroller.value.isInitialized) {
       if (_videoPlayercontroller.value.duration ==
@@ -34,6 +35,7 @@ class _VideoPostState extends State<VideoPost>
     }
   }
 
+  /// Player를 초기화 및 상태 변경되면 호출할 이밴트 등록
   void _initVideoPlayer() async {
     await _videoPlayercontroller.initialize();
     _videoPlayercontroller.addListener(
@@ -42,10 +44,7 @@ class _VideoPostState extends State<VideoPost>
     setState(() {});
   }
 
-  @override
-  void initState() {
-    super.initState();
-    _initVideoPlayer();
+  void _initAnimateController() {
     _animationController = AnimationController(
       vsync: this,
       lowerBound: 1.0,
@@ -54,8 +53,15 @@ class _VideoPostState extends State<VideoPost>
       duration: _animationDuration,
     );
     _animationController.addListener(() {
-      print(_animationController.value);
+      setState(() {});
     });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _initVideoPlayer();
+    _initAnimateController();
   }
 
   @override
@@ -64,6 +70,7 @@ class _VideoPostState extends State<VideoPost>
     super.dispose();
   }
 
+  /// 화면을 완전히 체우면 비디오 재생
   void _onVisibilityChanged(VisibilityInfo visibilityInfo) {
     if (visibilityInfo.visibleFraction == 1 &&
         !_videoPlayercontroller.value.isPlaying) {
