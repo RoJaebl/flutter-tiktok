@@ -115,6 +115,7 @@ class _VideoCommentsState extends State<VideoComments> {
                 bottom: 0,
                 width: size.width,
                 child: BottomAppBar(
+                  elevation: 0,
                   padding: EdgeInsets.zero,
                   color: Colors.white,
                   child: Padding(
