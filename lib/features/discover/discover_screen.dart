@@ -13,35 +13,134 @@ class DiscoverScreen extends StatefulWidget {
   State<DiscoverScreen> createState() => _DiscoverScreenState();
 }
 
-class _DiscoverScreenState extends State<DiscoverScreen> {
-  final TextEditingController _textEditingController =
-      TextEditingController(text: "Initial Text");
+class _DiscoverScreenState extends State<DiscoverScreen>
+    with SingleTickerProviderStateMixin {
+  final TextEditingController _textEditingController = TextEditingController();
+  late final TabController _tabController;
+  bool _textFieldFocus = false;
 
-  void _onSearchChanged(String value) => print("Searching form $value");
-
-  void _onSearchSubmitted(String value) => print("Submitted $value");
+  @override
+  void initState() {
+    super.initState();
+    _textEditingController.addListener(() {
+      setState(() {});
+    });
+    _tabController = TabController(vsync: this, length: tabs.length);
+    _tabController.addListener(() {
+      var tabDrag =
+          _tabController.offset != 0.0 || !_tabController.indexIsChanging;
+      tabDrag ? FocusScope.of(context).unfocus() : null;
+      _textFieldFocus = !tabDrag;
+    });
+  }
 
   @override
   void dispose() {
+    _tabController.dispose();
     _textEditingController.dispose();
     super.dispose();
   }
 
+  void _onTapTextFiled() => setState(() {
+        _textFieldFocus = true;
+      });
+
+  void _onTapClear() => _textEditingController.text.isNotEmpty
+      ? _textEditingController.clear()
+      : null;
+
+  void _onTapUnfocus() => setState(() {
+        FocusScope.of(context).unfocus();
+        _textFieldFocus = false;
+      });
+
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-      length: tabs.length,
+    return GestureDetector(
+      onTap: _onTapUnfocus,
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
           elevation: 0,
           centerTitle: true,
-          title: CupertinoSearchTextField(
-            controller: _textEditingController,
-            onChanged: _onSearchChanged,
-            onSubmitted: _onSearchSubmitted,
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Gaps.h60,
+              Expanded(
+                child: SizedBox(
+                  height: Sizes.size44,
+                  child: TextField(
+                    controller: _textEditingController,
+                    onTap: _onTapTextFiled,
+                    minLines: null,
+                    maxLines: 1,
+                    autocorrect: false,
+                    decoration: InputDecoration(
+                      hintText: "Discover contents",
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(
+                          Sizes.size4,
+                        ),
+                        borderSide: BorderSide.none,
+                      ),
+                      filled: true,
+                      fillColor: Colors.grey.shade200,
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: Sizes.size24,
+                      ),
+                      suffixIcon: GestureDetector(
+                        onTap: _onTapClear,
+                        child: Padding(
+                          padding: const EdgeInsets.only(
+                            right: Sizes.size10,
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Opacity(
+                                opacity:
+                                    _textEditingController.text.isEmpty ? 0 : 1,
+                                child: FaIcon(
+                                  FontAwesomeIcons.solidCircleXmark,
+                                  size: Sizes.size20,
+                                  color: Colors.grey.shade900,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      prefixIcon: Padding(
+                        padding: const EdgeInsets.only(
+                          left: Sizes.size10,
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            FaIcon(
+                              FontAwesomeIcons.magnifyingGlass,
+                              size: Sizes.size20,
+                              color: _textFieldFocus
+                                  ? Colors.grey.shade900
+                                  : Colors.grey.shade400,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              Gaps.h24,
+              const FaIcon(
+                FontAwesomeIcons.sliders,
+              ),
+            ],
           ),
           bottom: TabBar(
+            controller: _tabController,
             splashFactory: NoSplash.splashFactory,
             tabAlignment: TabAlignment.start,
             padding: const EdgeInsets.symmetric(horizontal: Sizes.size16),
@@ -63,6 +162,7 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
           ),
         ),
         body: TabBarView(
+          controller: _tabController,
           children: [
             GridView.builder(
               keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
