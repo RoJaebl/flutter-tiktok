@@ -4,9 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
 
 
-import 'package:tiktok_clone/features/authentication/sign_up_screen.dart';
-
-
 import 'package:tiktok_clone/features/main_navigation/main_navigation_screen.dart';
 
 
@@ -33,6 +30,12 @@ class TikTokApp extends StatelessWidget {
       theme: ThemeData(
 
         primaryColor: const Color(0xffe9435a),
+
+        textSelectionTheme: const TextSelectionThemeData(
+
+          cursorColor: Color(0xffe9435a),
+
+        ),
 
         scaffoldBackgroundColor: Colors.white,
 
