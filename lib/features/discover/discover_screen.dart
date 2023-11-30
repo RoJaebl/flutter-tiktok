@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:tiktok_clone/constants/gaps.dart';
@@ -22,9 +21,7 @@ class _DiscoverScreenState extends State<DiscoverScreen>
   @override
   void initState() {
     super.initState();
-    _textEditingController.addListener(() {
-      setState(() {});
-    });
+    _textEditingController.addListener(() => setState(() {}));
     _tabController = TabController(vsync: this, length: tabs.length);
     _tabController.addListener(() {
       var tabDrag =
@@ -41,9 +38,7 @@ class _DiscoverScreenState extends State<DiscoverScreen>
     super.dispose();
   }
 
-  void _onTapTextFiled() => setState(() {
-        _textFieldFocus = true;
-      });
+  void _onTapTextFiled() => setState(() => _textFieldFocus = true);
 
   void _onTapClear() => _textEditingController.text.isNotEmpty
       ? _textEditingController.clear()
@@ -66,7 +61,10 @@ class _DiscoverScreenState extends State<DiscoverScreen>
           title: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Gaps.h60,
+              const FaIcon(
+                FontAwesomeIcons.chevronLeft,
+              ),
+              Gaps.h24,
               Expanded(
                 child: SizedBox(
                   height: Sizes.size44,
