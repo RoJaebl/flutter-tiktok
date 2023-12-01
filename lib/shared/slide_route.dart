@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 
 
+const avatarUri = "https://avatars.githubusercontent.com/u/40203276?v=4";
+
+const nikoaAvatarUri = "https://avatars.githubusercontent.com/u/3612017?v=4";
+
+
 PageRouteBuilder<dynamic> slideRoute({required Widget screen}) {
 
   return PageRouteBuilder(
