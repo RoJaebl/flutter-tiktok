@@ -14,18 +14,21 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
       slivers: [
         SliverAppBar(
           floating: true,
-          stretch: true,
+          snap: true,
           pinned: true,
+          stretch: true,
           backgroundColor: Colors.teal,
           elevation: 1,
           collapsedHeight: 80,
           expandedHeight: 200,
           flexibleSpace: FlexibleSpaceBar(
+            centerTitle: true,
             stretchModes: const [
               StretchMode.blurBackground,
               StretchMode.zoomBackground,
+              StretchMode.fadeTitle
             ],
-            centerTitle: true,
+            titlePadding: EdgeInsets.zero,
             background: Image.asset(
               "assets/images/tiktok.jpg",
               fit: BoxFit.cover,
@@ -40,11 +43,19 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
         ),
         SliverFixedExtentList(
           delegate: SliverChildBuilderDelegate(
-            (context, index) => Container(),
+            childCount: 50,
+            (context, index) => Container(
+              color: Colors.amber[100 * (index % 9)],
+              child: Align(
+                alignment: Alignment.center,
+                child: Text("Item $index"),
+              ),
+            ),
           ),
           itemExtent: 100,
         ),
       ],
+      physics: const BouncingScrollPhysics(),
     );
   }
 }
