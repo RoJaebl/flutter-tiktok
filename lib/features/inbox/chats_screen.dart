@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
+import 'package:tiktok_clone/features/inbox/chat_detail_Screen.dart';
 import 'package:tiktok_clone/shared/slide_route.dart';
 
 class ChatsScreen extends StatefulWidget {
@@ -14,16 +15,66 @@ class _ChatsScreenState extends State<ChatsScreen> {
   final GlobalKey<AnimatedListState> _key = GlobalKey<AnimatedListState>();
 
   final List<int> _items = [];
+  final Duration _duration = const Duration(milliseconds: 300);
 
   void _addItem() {
     if (_key.currentState != null) {
       _key.currentState!.insertItem(
         _items.length,
-        duration: const Duration(milliseconds: 300),
+        duration: _duration,
       );
       _items.add(_items.length);
     }
   }
+
+  void _deleteItem(int index) {
+    if (_key.currentState != null) {
+      _key.currentState!.removeItem(
+          index,
+          (context, animation) => SizeTransition(
+                sizeFactor: animation,
+                child: _makeTile(index),
+              ),
+          duration: _duration);
+    }
+    _items.removeAt(index);
+  }
+
+  void _onChatTap() => Navigator.of(context).push(slideRoute(
+        screen: const ChatDetailScreen(),
+      ));
+
+  Widget _makeTile(int index) => ListTile(
+        onLongPress: () => _deleteItem(index),
+        onTap: _onChatTap,
+        leading: const CircleAvatar(
+          radius: 30,
+          foregroundImage: NetworkImage(nikoaAvatarUri),
+          child: Text("헌남"),
+        ),
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "니꼬 ($index)",
+              style: const TextStyle(
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            Text(
+              "2:16 PM",
+              style: TextStyle(
+                color: Colors.grey.shade500,
+                fontSize: Sizes.size12,
+              ),
+            ),
+          ],
+        ),
+        subtitle: const Text(
+          "Dopn't forget to make video",
+        ),
+      );
 
   @override
   Widget build(BuildContext context) {
@@ -53,35 +104,7 @@ class _ChatsScreenState extends State<ChatsScreen> {
             opacity: animation,
             child: SizeTransition(
               sizeFactor: animation,
-              child: ListTile(
-                leading: const CircleAvatar(
-                  radius: 30,
-                  foregroundImage: NetworkImage(nikoaAvatarUri),
-                  child: Text("헌남"),
-                ),
-                title: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "니꼬 ($index)",
-                      style: const TextStyle(
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    Text(
-                      "2:16 PM",
-                      style: TextStyle(
-                        color: Colors.grey.shade500,
-                        fontSize: Sizes.size12,
-                      ),
-                    ),
-                  ],
-                ),
-                subtitle: const Text(
-                  "Dopn't forget to make video",
-                ),
-              ),
+              child: _makeTile(index),
             ),
           );
         },
