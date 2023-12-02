@@ -74,10 +74,12 @@ class _VideoPostState extends State<VideoPost>
   }
 
   /// 화면을 완전히 체우면 비디오 재생
-  void _onVisibilityChanged(VisibilityInfo visibilityInfo) =>
-      visibilityInfo.visibleFraction == 1 && !_isPaused
-          ? _videoPlayercontroller.play()
-          : _videoPlayercontroller.pause();
+  void _onVisibilityChanged(VisibilityInfo visibilityInfo) {
+    if (!mounted) return;
+    visibilityInfo.visibleFraction == 1 && !_isPaused
+        ? _videoPlayercontroller.play()
+        : _videoPlayercontroller.pause();
+  }
 
   void _onTogglePause() => setState(() {
         _videoPlayercontroller.value.isPlaying
