@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:tiktok_clone/constants/gaps.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
 
@@ -44,6 +45,100 @@ class SuperStarBox extends StatelessWidget {
             endIndent: Sizes.size14,
           ),
       ],
+    );
+  }
+}
+
+class SuperStartAcount extends StatelessWidget {
+  const SuperStartAcount({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: Sizes.size48,
+      padding: const EdgeInsets.symmetric(
+        horizontal: Sizes.size72,
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            flex: 7,
+            child: Container(
+              alignment: Alignment.center,
+              padding: const EdgeInsets.symmetric(
+                vertical: Sizes.size12,
+              ),
+              decoration: BoxDecoration(
+                color: Theme.of(context).primaryColor,
+                borderRadius: const BorderRadius.all(
+                  Radius.circular(
+                    Sizes.size4,
+                  ),
+                ),
+              ),
+              child: const Text(
+                "Follow",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ),
+          Gaps.h5,
+          Expanded(
+            flex: 2,
+            child: Container(
+              alignment: Alignment.center,
+              padding: const EdgeInsets.symmetric(
+                vertical: Sizes.size12,
+              ),
+              decoration: BoxDecoration(
+                borderRadius: const BorderRadius.all(
+                  Radius.circular(
+                    Sizes.size4,
+                  ),
+                ),
+                border: Border.all(
+                  color: Colors.grey.shade600,
+                  width: 0.5,
+                ),
+              ),
+              child: const FaIcon(
+                FontAwesomeIcons.youtube,
+                size: Sizes.size24,
+              ),
+            ),
+          ),
+          Gaps.h5,
+          Expanded(
+            flex: 2,
+            child: Container(
+              alignment: Alignment.center,
+              padding: const EdgeInsets.symmetric(
+                vertical: Sizes.size12,
+              ),
+              decoration: BoxDecoration(
+                borderRadius: const BorderRadius.all(
+                  Radius.circular(
+                    Sizes.size4,
+                  ),
+                ),
+                border: Border.all(
+                  color: Colors.grey.shade600,
+                  width: 0.5,
+                ),
+              ),
+              child: const FaIcon(
+                FontAwesomeIcons.caretDown,
+                size: Sizes.size24,
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

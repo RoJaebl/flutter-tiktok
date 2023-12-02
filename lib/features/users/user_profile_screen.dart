@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:tiktok_clone/constants/gaps.dart';
@@ -88,30 +90,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                       ),
                     ),
                     Gaps.v14,
-                    FractionallySizedBox(
-                      widthFactor: 0.33,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          vertical: Sizes.size12,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).primaryColor,
-                          borderRadius: const BorderRadius.all(
-                            Radius.circular(
-                              Sizes.size4,
-                            ),
-                          ),
-                        ),
-                        child: const Text(
-                          "Follow",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w600,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                    ),
+                    const SuperStartAcount(),
                     Gaps.v14,
                     const Padding(
                       padding: EdgeInsets.symmetric(
@@ -162,7 +141,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                   crossAxisSpacing: Sizes.size2,
                   childAspectRatio: 9 / 14,
                 ),
-                itemBuilder: (context, index) => Column(
+                itemBuilder: (context, index) => Stack(
                   children: [
                     AspectRatio(
                       aspectRatio: 9 / 14,
@@ -173,6 +152,25 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                         fit: BoxFit.cover,
                       ),
                     ),
+                    const Positioned(
+                      left: Sizes.size3,
+                      bottom: Sizes.size3,
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.play_arrow_rounded,
+                            color: Colors.white,
+                            size: Sizes.size24,
+                          ),
+                          Text(
+                            "4.1M",
+                            style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                color: Colors.white),
+                          ),
+                        ],
+                      ),
+                    )
                   ],
                 ),
               ),
