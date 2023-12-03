@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:tiktok_clone/constants/breakpoints.dart';
 import 'package:tiktok_clone/constants/gaps.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
 import 'package:tiktok_clone/features/settings/settings_screen.dart';
@@ -21,6 +22,8 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    var width = MediaQuery.of(context).size.width;
+
     return SafeArea(
       child: DefaultTabController(
         length: 2,
@@ -43,87 +46,92 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                 ],
               ),
               SliverToBoxAdapter(
-                child: Column(
-                  children: [
-                    const CircleAvatar(
-                      radius: 50,
-                      foregroundImage: NetworkImage(avatarUri),
-                      child: Text("헌남"),
+                child: Container(
+                    width: 300,
+                    constraints: const BoxConstraints(
+                      maxWidth: 200,
                     ),
-                    Gaps.v20,
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                    child: Column(
                       children: [
-                        const Text(
-                          "@헌남",
-                          style: TextStyle(
-                            fontWeight: FontWeight.w600,
-                            fontSize: Sizes.size18,
+                        const CircleAvatar(
+                          radius: 50,
+                          foregroundImage: NetworkImage(avatarUri),
+                          child: Text("헌남"),
+                        ),
+                        Gaps.v20,
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Text(
+                              "@헌남",
+                              style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontSize: Sizes.size18,
+                              ),
+                            ),
+                            Gaps.h5,
+                            FaIcon(
+                              FontAwesomeIcons.solidCircleCheck,
+                              size: Sizes.size16,
+                              color: Colors.blue.shade500,
+                            ),
+                          ],
+                        ),
+                        Gaps.v24,
+                        const SizedBox(
+                          height: Sizes.size48,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              SuperStarBox(
+                                title: "97",
+                                subTitle: "Following",
+                                divider: true,
+                              ),
+                              SuperStarBox(
+                                title: "10M",
+                                subTitle: "Followers",
+                                divider: true,
+                              ),
+                              SuperStarBox(
+                                title: "194.3M",
+                                subTitle: "Likes",
+                              ),
+                            ],
                           ),
                         ),
-                        Gaps.h5,
-                        FaIcon(
-                          FontAwesomeIcons.solidCircleCheck,
-                          size: Sizes.size16,
-                          color: Colors.blue.shade500,
+                        Gaps.v14,
+                        const SuperStartAcount(
+                          width: 300,
                         ),
+                        Gaps.v14,
+                        const SizedBox(
+                          width: 300,
+                          child: Text(
+                            "All highlights and where to watch live matches on FIFA+ I wonder how it would look",
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                        Gaps.v14,
+                        const Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            FaIcon(
+                              FontAwesomeIcons.link,
+                              size: Sizes.size12,
+                            ),
+                            Gaps.h4,
+                            Text(
+                              "https://nomadcorders.co",
+                              style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                        Gaps.v20,
                       ],
-                    ),
-                    Gaps.v24,
-                    const SizedBox(
-                      height: Sizes.size48,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          SuperStarBox(
-                            title: "97",
-                            subTitle: "Following",
-                            divider: true,
-                          ),
-                          SuperStarBox(
-                            title: "10M",
-                            subTitle: "Followers",
-                            divider: true,
-                          ),
-                          SuperStarBox(
-                            title: "194.3M",
-                            subTitle: "Likes",
-                          ),
-                        ],
-                      ),
-                    ),
-                    Gaps.v14,
-                    const SuperStartAcount(),
-                    Gaps.v14,
-                    const Padding(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: Sizes.size32,
-                      ),
-                      child: Text(
-                        "All highlights and where to watch live matches on FIFA+ I wonder how it would look",
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                    Gaps.v14,
-                    const Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        FaIcon(
-                          FontAwesomeIcons.link,
-                          size: Sizes.size12,
-                        ),
-                        Gaps.h4,
-                        Text(
-                          "https://nomadcorders.co",
-                          style: TextStyle(
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ],
-                    ),
-                    Gaps.v20,
-                  ],
-                ),
+                    )),
               ),
               SliverPersistentHeader(
                 delegate: PersistentTabBar(),
@@ -138,8 +146,8 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                 keyboardDismissBehavior:
                     ScrollViewKeyboardDismissBehavior.onDrag,
                 itemCount: 20,
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 3,
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: width > Breakpoints.md ? 5 : 3,
                   mainAxisSpacing: Sizes.size2,
                   crossAxisSpacing: Sizes.size2,
                   childAspectRatio: 9 / 14,
