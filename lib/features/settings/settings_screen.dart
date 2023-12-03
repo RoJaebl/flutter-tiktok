@@ -2,6 +2,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class SettingScreen extends StatefulWidget {
   const SettingScreen({super.key});
@@ -79,6 +80,60 @@ class _SettingScreenState extends State<SettingScreen> {
             },
             title: const Text(
               "What is your birthday?",
+            ),
+          ),
+          ListTile(
+            onTap: () => showCupertinoDialog(
+              context: context,
+              builder: (context) => CupertinoAlertDialog(
+                title: const Text("Are you sure?"),
+                content: const Text("Plx dont go"),
+                actions: [
+                  CupertinoDialogAction(
+                    onPressed: () => Navigator.of(context).pop(),
+                    child: const Text("No"),
+                  ),
+                  CupertinoDialogAction(
+                    onPressed: () => Navigator.of(context).pop(),
+                    isDestructiveAction: true,
+                    child: const Text("Yes"),
+                  ),
+                ],
+              ),
+            ),
+            title: const Text(
+              "Log out (iOS)",
+              style: TextStyle(
+                color: Colors.red,
+              ),
+            ),
+          ),
+          ListTile(
+            onTap: () => showDialog(
+              context: context,
+              builder: (context) => AlertDialog(
+                icon: const FaIcon(FontAwesomeIcons.skull),
+                title: const Text("Are you sure?"),
+                content: const Text("Plx dont go"),
+                actions: [
+                  IconButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    icon: const FaIcon(
+                      FontAwesomeIcons.car,
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    child: const Text("Yes"),
+                  ),
+                ],
+              ),
+            ),
+            title: const Text(
+              "Log out (Android)",
+              style: TextStyle(
+                color: Colors.red,
+              ),
             ),
           ),
           const AboutListTile(),
