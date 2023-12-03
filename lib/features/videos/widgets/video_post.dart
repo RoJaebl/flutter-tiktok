@@ -20,15 +20,24 @@ class VideoPost extends StatefulWidget {
   State<VideoPost> createState() => _VideoPostState();
 }
 
-class _VideoPostState extends State<VideoPost>
-    with SingleTickerProviderStateMixin {
+class _VideoPostState extends State<VideoPost> with TickerProviderStateMixin {
   final VideoPlayerController _videoPlayercontroller =
       VideoPlayerController.asset("assets/videos/sample_video.mp4");
 
   bool _isPaused = false;
+  bool _isMute = false;
+  final double _volume = 1.0;
 
   final Duration _animationDuration = const Duration(milliseconds: 200);
-  late final AnimationController _animationController;
+
+  /// AnimateController를 초기화 및 이벤트 등록
+  late final AnimationController _animationController = AnimationController(
+    vsync: this,
+    lowerBound: 1.0,
+    upperBound: 1.5,
+    value: 1.5,
+    duration: _animationDuration,
+  );
 
   /// Player가 초기화 되고 영상을 마치면 다음 페이지 콜백
   void _onVideoChange() {
@@ -51,22 +60,10 @@ class _VideoPostState extends State<VideoPost>
     setState(() {});
   }
 
-  /// AnimateController를 초기화 및 이벤트 등록
-  void _initAnimateController() {
-    _animationController = AnimationController(
-      vsync: this,
-      lowerBound: 1.0,
-      upperBound: 1.5,
-      value: 1.5,
-      duration: _animationDuration,
-    );
-  }
-
   @override
   void initState() {
     super.initState();
     _initVideoPlayer();
-    _initAnimateController();
   }
 
   @override
@@ -104,6 +101,13 @@ class _VideoPostState extends State<VideoPost>
     _onTogglePause();
   }
 
+  void _onToggleMute() => setState(() {
+        _isMute
+            ? _videoPlayercontroller.setVolume(0)
+            : _videoPlayercontroller.setVolume(_volume);
+        _isMute = !_isMute;
+      });
+
   @override
   Widget build(BuildContext context) {
     return VisibilityDetector(
@@ -121,6 +125,7 @@ class _VideoPostState extends State<VideoPost>
           Positioned.fill(
             child: GestureDetector(
               onTap: _onTogglePause,
+              onDoubleTap: _onToggleMute,
             ),
           ),
           Positioned.fill(
