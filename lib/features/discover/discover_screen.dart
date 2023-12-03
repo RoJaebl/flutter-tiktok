@@ -60,84 +60,90 @@ class _DiscoverScreenState extends State<DiscoverScreen>
         appBar: AppBar(
           elevation: 0,
           centerTitle: true,
-          title: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const FaIcon(
-                FontAwesomeIcons.chevronLeft,
-              ),
-              Gaps.h24,
-              Expanded(
-                child: SizedBox(
-                  height: Sizes.size44,
-                  child: TextField(
-                    controller: _textEditingController,
-                    onTap: _onTapTextFiled,
-                    minLines: null,
-                    maxLines: 1,
-                    autocorrect: false,
-                    decoration: InputDecoration(
-                      hintText: "Discover contents",
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(
-                          Sizes.size4,
+          title: Container(
+            constraints: const BoxConstraints(
+              maxWidth: Breakpoints.sm,
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const FaIcon(
+                  FontAwesomeIcons.chevronLeft,
+                ),
+                Gaps.h24,
+                Expanded(
+                  child: SizedBox(
+                    height: Sizes.size44,
+                    child: TextField(
+                      controller: _textEditingController,
+                      onTap: _onTapTextFiled,
+                      minLines: null,
+                      maxLines: 1,
+                      autocorrect: false,
+                      decoration: InputDecoration(
+                        hintText: "Discover contents",
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(
+                            Sizes.size4,
+                          ),
+                          borderSide: BorderSide.none,
                         ),
-                        borderSide: BorderSide.none,
-                      ),
-                      filled: true,
-                      fillColor: Colors.grey.shade200,
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: Sizes.size24,
-                      ),
-                      suffixIcon: GestureDetector(
-                        onTap: _onTapClear,
-                        child: Padding(
+                        filled: true,
+                        fillColor: Colors.grey.shade200,
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: Sizes.size24,
+                        ),
+                        suffixIcon: GestureDetector(
+                          onTap: _onTapClear,
+                          child: Padding(
+                            padding: const EdgeInsets.only(
+                              right: Sizes.size10,
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Opacity(
+                                  opacity: _textEditingController.text.isEmpty
+                                      ? 0
+                                      : 1,
+                                  child: FaIcon(
+                                    FontAwesomeIcons.solidCircleXmark,
+                                    size: Sizes.size20,
+                                    color: Colors.grey.shade900,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        prefixIcon: Padding(
                           padding: const EdgeInsets.only(
-                            right: Sizes.size10,
+                            left: Sizes.size10,
                           ),
                           child: Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Opacity(
-                                opacity:
-                                    _textEditingController.text.isEmpty ? 0 : 1,
-                                child: FaIcon(
-                                  FontAwesomeIcons.solidCircleXmark,
-                                  size: Sizes.size20,
-                                  color: Colors.grey.shade900,
-                                ),
+                              FaIcon(
+                                FontAwesomeIcons.magnifyingGlass,
+                                size: Sizes.size20,
+                                color: _textFieldFocus
+                                    ? Colors.grey.shade900
+                                    : Colors.grey.shade400,
                               ),
                             ],
                           ),
                         ),
                       ),
-                      prefixIcon: Padding(
-                        padding: const EdgeInsets.only(
-                          left: Sizes.size10,
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            FaIcon(
-                              FontAwesomeIcons.magnifyingGlass,
-                              size: Sizes.size20,
-                              color: _textFieldFocus
-                                  ? Colors.grey.shade900
-                                  : Colors.grey.shade400,
-                            ),
-                          ],
-                        ),
-                      ),
                     ),
                   ),
                 ),
-              ),
-              Gaps.h24,
-              const FaIcon(
-                FontAwesomeIcons.sliders,
-              ),
-            ],
+                Gaps.h24,
+                const FaIcon(
+                  FontAwesomeIcons.sliders,
+                ),
+              ],
+            ),
           ),
           bottom: TabBar(
             controller: _tabController,
