@@ -3,6 +3,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:tiktok_clone/constants/breakpoints.dart';
 import 'package:tiktok_clone/constants/gaps.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
+import 'package:tiktok_clone/utils.dart';
 
 final tabs = ["Top", "Users", "Videos", "Sounds", "Live", "Shopping", "Brands"];
 
@@ -80,6 +81,10 @@ class _DiscoverScreenState extends State<DiscoverScreen>
                       minLines: null,
                       maxLines: 1,
                       autocorrect: false,
+                      style: TextStyle(
+                        color:
+                            isDarkMode(context) ? Colors.white : Colors.black,
+                      ),
                       decoration: InputDecoration(
                         hintText: "Discover contents",
                         border: OutlineInputBorder(
@@ -88,8 +93,6 @@ class _DiscoverScreenState extends State<DiscoverScreen>
                           ),
                           borderSide: BorderSide.none,
                         ),
-                        filled: true,
-                        fillColor: Colors.grey.shade200,
                         contentPadding: const EdgeInsets.symmetric(
                           horizontal: Sizes.size24,
                         ),
@@ -152,8 +155,6 @@ class _DiscoverScreenState extends State<DiscoverScreen>
             padding: const EdgeInsets.symmetric(horizontal: Sizes.size16),
             isScrollable: true,
             unselectedLabelColor: Colors.grey.shade500,
-            labelColor: Colors.black,
-            indicatorColor: Colors.black,
             indicatorSize: TabBarIndicatorSize.tab,
             labelStyle: const TextStyle(
               fontSize: Sizes.size16,
@@ -204,9 +205,9 @@ class _DiscoverScreenState extends State<DiscoverScreen>
                       ),
                     ),
                     Gaps.v10,
-                    Text(
-                      "${constraints.maxWidth}This is a very long caption for my tiktok that im upload just now currently",
-                      style: const TextStyle(
+                    const Text(
+                      "This is a very long caption for my tiktok that im upload just now currently",
+                      style: TextStyle(
                         fontSize: Sizes.size16 + Sizes.size2,
                         fontWeight: FontWeight.bold,
                         height: 1,
@@ -219,7 +220,9 @@ class _DiscoverScreenState extends State<DiscoverScreen>
                         constraints.maxWidth > 250)
                       DefaultTextStyle(
                         style: TextStyle(
-                            color: Colors.grey.shade600,
+                            color: isDarkMode(context)
+                                ? Colors.grey.shade300
+                                : Colors.grey.shade600,
                             fontWeight: FontWeight.w600),
                         child: Row(
                           children: [
