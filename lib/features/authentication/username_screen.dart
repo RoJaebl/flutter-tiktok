@@ -40,6 +40,7 @@ class _UserNameScreenState extends State<UserNameScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
         title: const Text(
           "Sign up",
         ),

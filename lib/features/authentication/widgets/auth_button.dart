@@ -7,8 +7,12 @@ class AuthButton extends StatelessWidget {
   final FaIcon icon;
   final Function? onTap;
 
-  const AuthButton(
-      {super.key, required this.text, required this.icon, this.onTap});
+  const AuthButton({
+    super.key,
+    required this.text,
+    required this.icon,
+    this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
