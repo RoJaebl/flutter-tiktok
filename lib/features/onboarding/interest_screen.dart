@@ -131,17 +131,19 @@ class _InterestScreenState extends State<InterestScreen> {
           ),
         ),
       ),
-      bottomNavigationBar: BottomAppBar(
+      bottomNavigationBar: Padding(
         padding: const EdgeInsets.only(
-          bottom: Sizes.size16,
+          bottom: Sizes.size40,
           top: Sizes.size16,
           left: Sizes.size24,
           right: Sizes.size24,
         ),
-        elevation: 1,
         child: GestureDetector(
           onTap: _onNextTap,
           child: Container(
+            padding: const EdgeInsets.symmetric(
+              vertical: Sizes.size16 + Sizes.size2,
+            ),
             decoration: BoxDecoration(
               color: Theme.of(context).primaryColor,
             ),

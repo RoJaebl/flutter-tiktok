@@ -48,7 +48,8 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
   Widget build(BuildContext context) {
     final isDark = isDarkMode(context);
     return Scaffold(
-      backgroundColor: _selectedIndex == 0 ? Colors.black : Colors.white,
+      backgroundColor:
+          _selectedIndex == 0 || isDark ? Colors.black : Colors.white,
       resizeToAvoidBottomInset: false,
       body: Stack(
         children: [
@@ -71,11 +72,13 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
           ),
         ],
       ),
-      bottomNavigationBar: BottomAppBar(
-        elevation: 0,
+      bottomNavigationBar: Container(
         color: _selectedIndex == 0 || isDark ? Colors.black : Colors.white,
+        padding: const EdgeInsets.only(
+          bottom: Sizes.size32,
+        ),
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: Sizes.size10),
+          padding: const EdgeInsets.all(Sizes.size12),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
