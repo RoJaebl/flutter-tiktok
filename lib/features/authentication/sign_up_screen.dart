@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import 'package:tiktok_clone/constants/gaps.dart';
 
@@ -15,6 +14,7 @@ import 'package:tiktok_clone/features/authentication/widgets/auth_button.dart';
 
 import 'package:tiktok_clone/shared/slide_route.dart';
 import 'package:tiktok_clone/utils.dart';
+import 'package:flutter_gen/gen_l10n/intl_generated.dart';
 
 class SignUpScreen extends StatelessWidget {
   const SignUpScreen({super.key});
@@ -38,9 +38,9 @@ class SignUpScreen extends StatelessWidget {
               child: Column(
                 children: [
                   Gaps.v80,
-                  const Text(
-                    "Sign up for TikTok",
-                    style: TextStyle(
+                  Text(
+                    AppLocalizations.of(context)!.signUpTitle("TikTok"),
+                    style: const TextStyle(
                       fontSize: Sizes.size24,
                       fontWeight: FontWeight.w700,
                     ),
