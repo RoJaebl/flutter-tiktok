@@ -1,3 +1,0 @@
-arb-dir: lib/intl # localizations file
-template-arb-file: intl_en.arb # master file
-output-localization-file: intl_generated.dart # generate code go to path
