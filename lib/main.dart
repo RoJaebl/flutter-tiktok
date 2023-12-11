@@ -5,6 +5,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'package:tiktok_clone/constants/sizes.dart';
 import 'package:tiktok_clone/features/authentication/sign_up_screen.dart';
+import 'package:tiktok_clone/features/main_navigation/main_navigation_screen.dart';
 import 'package:tiktok_clone/generated/l10n.dart';
 
 void main() async {
@@ -28,7 +29,7 @@ class TikTokApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    S.load(const Locale("en"));
+    // S.load(const Locale("en"));
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'TikTok Clone',
@@ -116,7 +117,7 @@ class TikTokApp extends StatelessWidget {
           fillColor: Colors.grey.shade800,
         ),
       ),
-      home: const SignUpScreen(),
+      home: const MainNavigationScreen(),
     );
   }
 }
