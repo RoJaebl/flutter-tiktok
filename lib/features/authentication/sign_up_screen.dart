@@ -19,9 +19,12 @@ import 'package:tiktok_clone/utils.dart';
 class SignUpScreen extends StatelessWidget {
   const SignUpScreen({super.key});
 
-  void _onLoginTap(BuildContext context) => Navigator.of(context).push(
-        slideRoute(screen: const LoginScreen()),
-      );
+  void _onLoginTap(BuildContext context) async {
+    await Navigator.of(context).push(
+      slideRoute(screen: const LoginScreen()),
+    );
+    print("user came back");
+  }
 
   void _onEmailTap(BuildContext context) => Navigator.of(context).push(
         slideRoute(screen: const UserNameScreen()),
@@ -39,7 +42,7 @@ class SignUpScreen extends StatelessWidget {
                 children: [
                   Gaps.v80,
                   Text(
-                    S.of(context).signUpTitle("TikTok", DateTime.now()),
+                    S.of(context).signUpTitle("TikTok"),
                     style: const TextStyle(
                       fontSize: Sizes.size24,
                       fontWeight: FontWeight.w700,
