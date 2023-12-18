@@ -10,10 +10,12 @@ import 'package:tiktok_clone/shared/slide_route.dart';
 
 class UserProfileScreen extends StatefulWidget {
   final String username;
+  final String tab;
 
   const UserProfileScreen({
     super.key,
     required this.username,
+    required this.tab,
   });
 
   @override
@@ -33,6 +35,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
       backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
       body: SafeArea(
         child: DefaultTabController(
+          initialIndex: widget.tab == "likes" ? 1 : 0,
           length: 2,
           child: NestedScrollView(
             headerSliverBuilder: (context, innerBoxIsScrolled) {
