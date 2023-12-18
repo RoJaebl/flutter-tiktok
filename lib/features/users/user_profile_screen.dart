@@ -9,7 +9,12 @@ import 'package:tiktok_clone/features/users/widgets/super_start_box.dart';
 import 'package:tiktok_clone/shared/slide_route.dart';
 
 class UserProfileScreen extends StatefulWidget {
-  const UserProfileScreen({super.key});
+  final String username;
+
+  const UserProfileScreen({
+    super.key,
+    required this.username,
+  });
 
   @override
   State<UserProfileScreen> createState() => _UserProfileScreenState();
@@ -34,8 +39,8 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
               return [
                 SliverAppBar(
                   centerTitle: true,
-                  title: const Text(
-                    "헌남",
+                  title: Text(
+                    widget.username,
                   ),
                   actions: [
                     IconButton(
@@ -65,9 +70,9 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              const Text(
-                                "@헌남",
-                                style: TextStyle(
+                              Text(
+                                "@${widget.username}",
+                                style: const TextStyle(
                                   fontWeight: FontWeight.w600,
                                   fontSize: Sizes.size18,
                                 ),
