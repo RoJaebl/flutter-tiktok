@@ -8,14 +8,17 @@ import 'package:tiktok_clone/shared/slide_route.dart';
 class EmailScreenArgs {
   final String username;
 
-  EmailScreenArgs({required this.username});
+  EmailScreenArgs({
+    required this.username,
+  });
 }
 
 final emailRegExp = RegExp(
     r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
 
 class EmailScreen extends StatefulWidget {
-  static String routeNmae = "/email";
+  static String routeURL = "email";
+  static String routeName = "email";
 
   final String username;
 
