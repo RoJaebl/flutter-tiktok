@@ -10,6 +10,7 @@ import 'package:tiktok_clone/features/authentication/sign_up_screen.dart';
 import 'package:tiktok_clone/features/authentication/username_screen.dart';
 import 'package:tiktok_clone/features/main_navigation/main_navigation_screen.dart';
 import 'package:tiktok_clone/generated/l10n.dart';
+import 'package:tiktok_clone/router.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -33,7 +34,8 @@ class TikTokApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // S.load(const Locale("en"));
-    return MaterialApp(
+    return MaterialApp.router(
+      routerConfig: router,
       debugShowCheckedModeBanner: false,
       title: 'TikTok Clone',
       themeMode: ThemeMode.system,
@@ -120,13 +122,6 @@ class TikTokApp extends StatelessWidget {
           fillColor: Colors.grey.shade800,
         ),
       ),
-      initialRoute: SignUpScreen.routeNmae,
-      routes: {
-        SignUpScreen.routeNmae: (context) => const SignUpScreen(),
-        UserNameScreen.routeName: (context) => const UserNameScreen(),
-        LoginScreen.routeName: (context) => const LoginScreen(),
-        EmailScreen.routeNmae: (context) => const EmailScreen(),
-      },
     );
   }
 }
