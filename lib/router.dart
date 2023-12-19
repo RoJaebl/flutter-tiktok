@@ -11,7 +11,7 @@ final router = GoRouter(
   ],
 );
 
-Page<dynamic> pageBuilder({required Widget page}) {
+Page<dynamic> pageBuilder({required Widget page, required Column child}) {
   return CustomTransitionPage(
     child: page,
     transitionsBuilder: slidePageRoute,
