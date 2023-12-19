@@ -17,7 +17,9 @@ class _VideoRecordingScreenState extends State<VideoRecordingScreen> {
   bool _hasPermission = false;
   bool _cameraDenied = false;
   bool _micDenied = false;
-  late final CameraController _cameraController;
+
+  bool _isSelfieMode = false;
+  late CameraController _cameraController;
   final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
       GlobalKey<RefreshIndicatorState>();
 
@@ -42,7 +44,7 @@ class _VideoRecordingScreenState extends State<VideoRecordingScreen> {
       return;
     }
     _cameraController = CameraController(
-      cameras[0],
+      cameras[_isSelfieMode ? 1 : 0],
       ResolutionPreset.ultraHigh,
     );
 
@@ -67,6 +69,12 @@ class _VideoRecordingScreenState extends State<VideoRecordingScreen> {
     super.dispose();
   }
 
+  Future<void> toggleSelfieMode() async {
+    _isSelfieMode = !_isSelfieMode;
+    await initCamera();
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -77,7 +85,6 @@ class _VideoRecordingScreenState extends State<VideoRecordingScreen> {
           backgroundColor: Colors.white,
           onRefresh: _checkPermission,
           child: SizedBox(
-            height: MediaQuery.of(context).size.height,
             width: MediaQuery.of(context).size.width,
             child: !_hasPermission || !_cameraController.value.isInitialized
                 ? Column(
@@ -107,6 +114,17 @@ class _VideoRecordingScreenState extends State<VideoRecordingScreen> {
                     alignment: Alignment.center,
                     children: [
                       CameraPreview(_cameraController),
+                      Positioned(
+                        top: Sizes.size20,
+                        left: Sizes.size20,
+                        child: IconButton(
+                          color: Colors.white,
+                          onPressed: toggleSelfieMode,
+                          icon: const Icon(
+                            Icons.cameraswitch,
+                          ),
+                        ),
+                      ),
                     ],
                   ),
           ),
