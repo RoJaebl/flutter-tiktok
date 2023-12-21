@@ -8,10 +8,12 @@ import 'package:video_player/video_player.dart';
 
 class VideoPreviewScreen extends StatefulWidget {
   final XFile video;
+  final bool isPicked;
 
   const VideoPreviewScreen({
     super.key,
     required this.video,
+    required this.isPicked,
   });
 
   @override
@@ -40,7 +42,7 @@ class _VideoPreviewScreenState extends State<VideoPreviewScreen> {
     _initVideo();
   }
 
-  Future<void> _saveToGllery() async {
+  Future<void> _saveToGallery() async {
     if (_savedVideo) return;
 
     await GallerySaver.saveVideo(
@@ -60,12 +62,13 @@ class _VideoPreviewScreenState extends State<VideoPreviewScreen> {
           "Preview video",
         ),
         actions: [
-          IconButton(
-            onPressed: _saveToGllery,
-            icon: FaIcon(_savedVideo
-                ? FontAwesomeIcons.check
-                : FontAwesomeIcons.floppyDisk),
-          ),
+          if (!widget.isPicked)
+            IconButton(
+              onPressed: _saveToGallery,
+              icon: FaIcon(_savedVideo
+                  ? FontAwesomeIcons.check
+                  : FontAwesomeIcons.floppyDisk),
+            ),
         ],
       ),
       body: _videoPlayerController.value.isInitialized
