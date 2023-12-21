@@ -2,10 +2,13 @@ import 'dart:async';
 
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:tiktok_clone/constants/gaps.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
+import 'package:tiktok_clone/features/videos/video_preview_scree.dart';
 import 'package:tiktok_clone/features/videos/widgets/video_camera_func.dart';
+import 'package:tiktok_clone/shared/slide_route.dart';
 
 class VideoRecordingScreen extends StatefulWidget {
   const VideoRecordingScreen({super.key});
@@ -21,7 +24,6 @@ class _VideoRecordingScreenState extends State<VideoRecordingScreen>
   bool _micDenied = false;
 
   bool _isSelfieMode = false;
-  late FlashMode _flashMode;
 
   late final AnimationController _buttonsAnimationController =
       AnimationController(
@@ -71,10 +73,10 @@ class _VideoRecordingScreenState extends State<VideoRecordingScreen>
     );
 
     await _cameraController.initialize();
+    await _cameraController.prepareForVideoRecording();
     _cameraController.addListener(() {
       setState(() {});
     });
-    _flashMode = _cameraController.value.flashMode;
   }
 
   Future<void> initPermissions() async {
@@ -99,6 +101,8 @@ class _VideoRecordingScreenState extends State<VideoRecordingScreen>
 
   @override
   void dispose() {
+    _progressAnimationController.dispose();
+    _buttonsAnimationController.dispose();
     _cameraController.dispose();
     super.dispose();
   }
@@ -109,14 +113,28 @@ class _VideoRecordingScreenState extends State<VideoRecordingScreen>
     setState(() {});
   }
 
-  void _startRecording(TapDownDetails _) {
+  Future<void> _startRecording(TapDownDetails _) async {
+    if (_cameraController.value.isRecordingVideo) return;
+
+    await _cameraController.startVideoRecording();
+
     _buttonsAnimationController.forward();
     _progressAnimationController.forward();
   }
 
-  void _stopRecording() {
+  Future<void> _stopRecording() async {
+    if (!_cameraController.value.isRecordingVideo) return;
+
     _buttonsAnimationController.reverse();
     _progressAnimationController.reset();
+
+    final video = await _cameraController.stopVideoRecording();
+    Navigator.push(
+      context,
+      slideRoute(
+        screen: VideoPreviewScreen(video: video),
+      ),
+    );
   }
 
   @override

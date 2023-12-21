@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
 
+
 import 'package:flutter/services.dart';
+
 
 import 'package:flutter_localizations/flutter_localizations.dart';
 
+
 import 'package:tiktok_clone/constants/sizes.dart';
 
+
 import 'package:tiktok_clone/generated/l10n.dart';
+
 
 import 'package:tiktok_clone/router.dart';
 
@@ -35,7 +40,9 @@ void main() async {
 
 
   runApp(
+
     const TikTokApp(),
+
   );
 
 }
@@ -51,6 +58,7 @@ class TikTokApp extends StatelessWidget {
   Widget build(BuildContext context) {
 
     // S.load(const Locale("en"));
+
 
     return MaterialApp.router(
 
@@ -233,3 +241,4 @@ class TikTokApp extends StatelessWidget {
   }
 
 }
+
