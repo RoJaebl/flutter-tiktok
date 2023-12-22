@@ -5,11 +5,13 @@ import 'package:tiktok_clone/constants/gaps.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
 import 'package:tiktok_clone/features/authentication/login_form_screen.dart';
 import 'package:tiktok_clone/features/authentication/widgets/auth_button.dart';
-import 'package:tiktok_clone/shared/slide_route.dart';
+import 'package:tiktok_clone/common/shared/slide_route.dart';
 import 'package:tiktok_clone/utils.dart';
 
 class LoginScreen extends StatelessWidget {
-  static String routeName = "/login";
+  static String routeName = "loginScreen";
+  static String routeURL = "/login";
+
   const LoginScreen({super.key});
 
   void _onSignUpTap(BuildContext context) => context.pop();

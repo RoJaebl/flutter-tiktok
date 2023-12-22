@@ -3,7 +3,7 @@ import 'package:tiktok_clone/constants/gaps.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
 import 'package:tiktok_clone/features/onboarding/tutorial_screen.dart';
 import 'package:tiktok_clone/features/onboarding/widgets/interest_buttin.dart';
-import 'package:tiktok_clone/shared/slide_route.dart';
+import 'package:tiktok_clone/common/shared/slide_route.dart';
 
 const interests = [
   "Daily Life",
@@ -47,6 +47,9 @@ const interests = [
 ];
 
 class InterestScreen extends StatefulWidget {
+  static const String routeName = "interests";
+  static const String routeURL = "/tutorial";
+
   const InterestScreen({super.key});
 
   @override
@@ -73,9 +76,10 @@ class _InterestScreenState extends State<InterestScreen> {
   void _onScroll() =>
       setState(() => _showTitle = _scrollcontroller.offset > 100);
 
-  void _onNextTap() {
-    Navigator.push(context, slideRoute(screen: const TutorialScreen()));
-  }
+  void _onNextTap() => Navigator.push(
+        context,
+        slideRoute(screen: const TutorialScreen()),
+      );
 
   @override
   Widget build(BuildContext context) {

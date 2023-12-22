@@ -7,7 +7,7 @@ import 'package:tiktok_clone/constants/sizes.dart';
 import 'package:tiktok_clone/features/videos/widgets/video_button.dart';
 import 'package:tiktok_clone/features/videos/widgets/video_comments.dart';
 import 'package:tiktok_clone/generated/l10n.dart';
-import 'package:tiktok_clone/shared/slide_route.dart';
+import 'package:tiktok_clone/common/shared/slide_route.dart';
 import 'package:video_player/video_player.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 

@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:tiktok_clone/common/shared/slide_route.dart';
 import 'package:tiktok_clone/constants/gaps.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
 import 'package:tiktok_clone/features/authentication/email_screen.dart';
 import 'package:tiktok_clone/features/authentication/widgets/form_button.dart';
 
 class UserNameScreen extends StatefulWidget {
-  static String routeURL = "username";
-  static String routeNmae = "username";
-
   const UserNameScreen({super.key});
 
   @override
@@ -17,11 +15,13 @@ class UserNameScreen extends StatefulWidget {
 
 class _UserNameScreenState extends State<UserNameScreen> {
   final TextEditingController _usernamecontroller = TextEditingController();
+
   String _username = "";
 
   @override
   void initState() {
     super.initState();
+
     _usernamecontroller.addListener(() {
       setState(() => _username = _usernamecontroller.text);
     });
@@ -30,13 +30,14 @@ class _UserNameScreenState extends State<UserNameScreen> {
   @override
   void dispose() {
     _usernamecontroller.dispose();
+
     super.dispose();
   }
 
   void _onTextTap() => _username.isNotEmpty
-      ? context.pushNamed(
-          EmailScreen.routeName,
-          extra: EmailScreenArgs(username: _username),
+      ? Navigator.push(
+          context,
+          slideRoute(screen: EmailScreen(username: _username)),
         )
       : null;
 

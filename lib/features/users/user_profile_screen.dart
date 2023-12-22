@@ -6,7 +6,7 @@ import 'package:tiktok_clone/constants/sizes.dart';
 import 'package:tiktok_clone/features/settings/settings_screen.dart';
 import 'package:tiktok_clone/features/users/widgets/persistent_tab_bar.dart';
 import 'package:tiktok_clone/features/users/widgets/super_start_box.dart';
-import 'package:tiktok_clone/shared/slide_route.dart';
+import 'package:tiktok_clone/common/shared/slide_route.dart';
 
 class UserProfileScreen extends StatefulWidget {
   final String username;

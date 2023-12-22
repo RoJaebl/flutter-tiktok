@@ -1,6 +1,8 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:camera/camera.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
@@ -10,7 +12,7 @@ import 'package:tiktok_clone/constants/gaps.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
 import 'package:tiktok_clone/features/videos/video_preview_scree.dart';
 import 'package:tiktok_clone/features/videos/widgets/video_camera_func.dart';
-import 'package:tiktok_clone/shared/slide_route.dart';
+import 'package:tiktok_clone/common/shared/slide_route.dart';
 
 class VideoRecordingScreen extends StatefulWidget {
   const VideoRecordingScreen({super.key});
@@ -31,6 +33,8 @@ class _VideoRecordingScreenState extends State<VideoRecordingScreen>
   double _baseZoomFactor = 1.0;
   late double _maxZoomLavel;
   late double _minZoomLavel;
+
+  late final bool _noCamera = kDebugMode && Platform.isIOS;
 
   late final AnimationController _buttonsAnimationController =
       AnimationController(
@@ -97,7 +101,13 @@ class _VideoRecordingScreenState extends State<VideoRecordingScreen>
   @override
   void initState() {
     super.initState();
-    initPermissions();
+    if (!_noCamera) {
+      initPermissions();
+    } else {
+      setState(() {
+        _hasPermission = true;
+      });
+    }
     WidgetsBinding.instance.addObserver(this);
     _progressAnimationController.addListener(() {
       setState(() {});
@@ -141,13 +151,13 @@ class _VideoRecordingScreenState extends State<VideoRecordingScreen>
     final video = await _cameraController.stopVideoRecording();
 
     if (!mounted) return;
-
-    Navigator.push(
+    await Navigator.push(
       context,
       slideRoute(
         screen: VideoPreviewScreen(video: video, isPicked: false),
       ),
     );
+    setState(() {});
   }
 
   Future<void> _onPickVideoPressed() async {
@@ -155,13 +165,13 @@ class _VideoRecordingScreenState extends State<VideoRecordingScreen>
       source: ImageSource.gallery,
     );
     if (video == null || !mounted) return;
-
-    Navigator.push(
+    await Navigator.push(
       context,
       slideRoute(
         screen: VideoPreviewScreen(video: video, isPicked: true),
       ),
     );
+    setState(() {});
   }
 
   @override
@@ -197,7 +207,7 @@ class _VideoRecordingScreenState extends State<VideoRecordingScreen>
         onRefresh: _checkPermission,
         child: SizedBox(
           width: MediaQuery.of(context).size.width,
-          child: !_hasPermission || !_cameraController.value.isInitialized
+          child: !_hasPermission
               ? Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -227,38 +237,40 @@ class _VideoRecordingScreenState extends State<VideoRecordingScreen>
                   child: Stack(
                     alignment: Alignment.center,
                     children: [
-                      CameraPreview(_cameraController),
-                      Positioned(
-                        top: Sizes.size32,
-                        right: Sizes.size20,
-                        child: Column(
-                          children: [
-                            IconButton(
-                              color: Colors.white,
-                              onPressed: toggleSelfieMode,
-                              icon: const Icon(
-                                Icons.cameraswitch,
+                      if (!_noCamera && _cameraController.value.isInitialized)
+                        CameraPreview(_cameraController),
+                      if (!_noCamera)
+                        Positioned(
+                          top: Sizes.size32,
+                          right: Sizes.size20,
+                          child: Column(
+                            children: [
+                              IconButton(
+                                color: Colors.white,
+                                onPressed: toggleSelfieMode,
+                                icon: const Icon(
+                                  Icons.cameraswitch,
+                                ),
                               ),
-                            ),
-                            Gaps.v10,
-                            CameraFlashButton(
-                                controller: _cameraController,
-                                mode: FlashMode.off),
-                            Gaps.v10,
-                            CameraFlashButton(
-                                controller: _cameraController,
-                                mode: FlashMode.always),
-                            Gaps.v10,
-                            CameraFlashButton(
-                                controller: _cameraController,
-                                mode: FlashMode.auto),
-                            Gaps.v10,
-                            CameraFlashButton(
-                                controller: _cameraController,
-                                mode: FlashMode.torch),
-                          ],
+                              Gaps.v10,
+                              CameraFlashButton(
+                                  controller: _cameraController,
+                                  mode: FlashMode.off),
+                              Gaps.v10,
+                              CameraFlashButton(
+                                  controller: _cameraController,
+                                  mode: FlashMode.always),
+                              Gaps.v10,
+                              CameraFlashButton(
+                                  controller: _cameraController,
+                                  mode: FlashMode.auto),
+                              Gaps.v10,
+                              CameraFlashButton(
+                                  controller: _cameraController,
+                                  mode: FlashMode.torch),
+                            ],
+                          ),
                         ),
-                      ),
                       Positioned(
                         bottom: Sizes.size40,
                         width: MediaQuery.of(context).size.width,

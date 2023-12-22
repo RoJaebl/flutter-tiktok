@@ -1,10 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:tiktok_clone/constants/gaps.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
 import 'package:tiktok_clone/features/authentication/widgets/form_button.dart';
 import 'package:tiktok_clone/features/onboarding/interest_screen.dart';
-import 'package:tiktok_clone/shared/slide_route.dart';
+import 'package:tiktok_clone/common/shared/slide_route.dart';
 
 class BirthDayScreen extends StatefulWidget {
   const BirthDayScreen({super.key});
@@ -29,8 +30,7 @@ class _BirthDayScreenState extends State<BirthDayScreen> {
     super.dispose();
   }
 
-  void _onTextTap() => Navigator.of(context).pushAndRemoveUntil(
-      slideRoute(screen: const InterestScreen()), (route) => false);
+  void _onTextTap() => context.pushReplacementNamed(InterestScreen.routeName);
 
   void _setTextFieldDate(DateTime date) =>
       _birthdaycontroller.value = TextEditingValue(

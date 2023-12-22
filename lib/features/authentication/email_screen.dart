@@ -3,7 +3,7 @@ import 'package:tiktok_clone/constants/gaps.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
 import 'package:tiktok_clone/features/authentication/password_screen.dart';
 import 'package:tiktok_clone/features/authentication/widgets/form_button.dart';
-import 'package:tiktok_clone/shared/slide_route.dart';
+import 'package:tiktok_clone/common/shared/slide_route.dart';
 
 class EmailScreenArgs {
   final String username;
@@ -17,9 +17,6 @@ final emailRegExp = RegExp(
     r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
 
 class EmailScreen extends StatefulWidget {
-  static String routeURL = "email";
-  static String routeName = "email";
-
   final String username;
 
   const EmailScreen({
@@ -33,11 +30,13 @@ class EmailScreen extends StatefulWidget {
 
 class _EmailScreenState extends State<EmailScreen> {
   final TextEditingController _emailcontroller = TextEditingController();
+
   String _email = "";
 
   @override
   void initState() {
     super.initState();
+
     _emailcontroller.addListener(() {
       setState(() => _email = _emailcontroller.text);
     });
@@ -46,6 +45,7 @@ class _EmailScreenState extends State<EmailScreen> {
   @override
   void dispose() {
     _emailcontroller.dispose();
+
     super.dispose();
   }
 
