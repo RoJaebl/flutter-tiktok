@@ -9,14 +9,15 @@ import 'package:tiktok_clone/common/shared/slide_route.dart';
 import 'package:tiktok_clone/utils.dart';
 
 class LoginScreen extends StatelessWidget {
-  static String routeName = "loginScreen";
+  static String routeName = "login";
   static String routeURL = "/login";
 
   const LoginScreen({super.key});
 
   void _onSignUpTap(BuildContext context) => context.pop();
 
-  void _onEmailLoginTap(BuildContext context) => Navigator.of(context).push(
+  void _onEmailLoginTap(BuildContext context) => Navigator.push(
+        context,
         slideRoute(screen: const LoginFormScreen()),
       );
 

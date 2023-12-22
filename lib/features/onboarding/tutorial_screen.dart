@@ -1,9 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:tiktok_clone/constants/gaps.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
-import 'package:tiktok_clone/common/widgets/main_navigation/main_navigation_screen.dart';
-import 'package:tiktok_clone/common/shared/slide_route.dart';
 import 'package:tiktok_clone/utils.dart';
 
 enum Direction { right, left }
@@ -45,8 +44,7 @@ class _TutorialScreenState extends State<TutorialScreen> {
     }
   }
 
-  void _onEnterAppTap() => Navigator.of(context).pushAndRemoveUntil(
-      slideRoute(screen: const MainNavigationScreen()), (route) => false);
+  void _onEnterAppTap() => context.go("/home");
 
   @override
   Widget build(BuildContext context) {
