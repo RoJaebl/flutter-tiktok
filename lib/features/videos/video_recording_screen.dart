@@ -20,7 +20,7 @@ class VideoRecordingScreen extends StatefulWidget {
 }
 
 class _VideoRecordingScreenState extends State<VideoRecordingScreen>
-    with TickerProviderStateMixin {
+    with TickerProviderStateMixin, WidgetsBindingObserver {
   bool _hasPermission = false;
   bool _cameraDenied = false;
   bool _micDenied = false;
@@ -91,6 +91,7 @@ class _VideoRecordingScreenState extends State<VideoRecordingScreen>
   void initState() {
     super.initState();
     initPermissions();
+    WidgetsBinding.instance.addObserver(this);
     _progressAnimationController.addListener(() {
       setState(() {});
     });
@@ -130,9 +131,10 @@ class _VideoRecordingScreenState extends State<VideoRecordingScreen>
     _buttonsAnimationController.reverse();
     _progressAnimationController.reset();
 
+    final video = await _cameraController.stopVideoRecording();
+
     if (!mounted) return;
 
-    final video = await _cameraController.stopVideoRecording();
     Navigator.push(
       context,
       slideRoute(
@@ -153,6 +155,18 @@ class _VideoRecordingScreenState extends State<VideoRecordingScreen>
         screen: VideoPreviewScreen(video: video, isPicked: true),
       ),
     );
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    if (!_hasPermission) return;
+    if (!_cameraController.value.isInitialized) return;
+    if (state == AppLifecycleState.inactive) {
+      _cameraController.dispose();
+    } else if (state == AppLifecycleState.resumed) {
+      initCamera();
+    }
   }
 
   @override
