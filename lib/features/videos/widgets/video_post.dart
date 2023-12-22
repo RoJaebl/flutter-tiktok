@@ -30,6 +30,8 @@ class _VideoPostState extends State<VideoPost> with TickerProviderStateMixin {
   bool _isMute = false;
   final double _volume = 1.0;
 
+  bool _autoMute = videoConfig.autoMute;
+
   final Duration _animationDuration = const Duration(milliseconds: 200);
 
   /// AnimateController를 초기화 및 이벤트 등록
@@ -66,6 +68,12 @@ class _VideoPostState extends State<VideoPost> with TickerProviderStateMixin {
   void initState() {
     super.initState();
     _initVideoPlayer();
+
+    videoConfig.addListener(() {
+      setState(() {
+        _autoMute = videoConfig.autoMute;
+      });
+    });
   }
 
   @override
@@ -182,12 +190,12 @@ class _VideoPostState extends State<VideoPost> with TickerProviderStateMixin {
             top: 40,
             child: IconButton(
               icon: FaIcon(
-                VideoConfigData.of(context).autoMute
+                _autoMute
                     ? FontAwesomeIcons.volumeOff
                     : FontAwesomeIcons.volumeHigh,
                 color: Colors.white,
               ),
-              onPressed: VideoConfigData.of(context).toggleMuted,
+              onPressed: videoConfig.toggleAutoMute,
             ),
           ),
           Positioned(
