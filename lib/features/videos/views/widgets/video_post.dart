@@ -5,6 +5,8 @@ import 'package:provider/provider.dart';
 import 'package:tiktok_clone/common/widgets/video_configuration/video_config.dart';
 import 'package:tiktok_clone/constants/gaps.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
+import 'package:tiktok_clone/features/videos/models/playback_config_model.dart';
+import 'package:tiktok_clone/features/videos/view_models/playback_config_vm.dart';
 import 'package:tiktok_clone/features/videos/views/widgets/video_button.dart';
 import 'package:tiktok_clone/features/videos/views/widgets/video_comments.dart';
 import 'package:tiktok_clone/generated/l10n.dart';
@@ -67,6 +69,10 @@ class _VideoPostState extends State<VideoPost> with TickerProviderStateMixin {
   void initState() {
     super.initState();
     _initVideoPlayer();
+
+    context
+        .read<PlaybackConfigViewModel>()
+        .addListener(_onPlaybackConfigChanged);
   }
 
   @override
@@ -75,10 +81,24 @@ class _VideoPostState extends State<VideoPost> with TickerProviderStateMixin {
     super.dispose();
   }
 
+  void _onPlaybackConfigChanged() {
+    if (!mounted) return;
+
+    final muted = context.read<PlaybackConfigViewModel>().muted;
+    if (muted) {
+      _videoPlayercontroller.setVolume(0);
+    } else {
+      _videoPlayercontroller.setVolume(1);
+    }
+  }
+
   /// 화면을 완전히 체우면 비디오 재생
   void _onVisibilityChanged(VisibilityInfo visibilityInfo) {
     if (!mounted) return;
-    visibilityInfo.visibleFraction == 1 && !_isPaused
+
+    final autoplay = context.read<PlaybackConfigViewModel>().autoplay;
+
+    visibilityInfo.visibleFraction == 1 && !_isPaused && autoplay
         ? _videoPlayercontroller.play()
         : _videoPlayercontroller.pause();
   }
@@ -182,13 +202,17 @@ class _VideoPostState extends State<VideoPost> with TickerProviderStateMixin {
             left: 20,
             top: 40,
             child: IconButton(
-              icon: const FaIcon(
-                false
+              icon: FaIcon(
+                context.watch<PlaybackConfigViewModel>().muted
                     ? FontAwesomeIcons.volumeOff
                     : FontAwesomeIcons.volumeHigh,
                 color: Colors.white,
               ),
-              onPressed: () {},
+              onPressed: () {
+                context.read<PlaybackConfigViewModel>().setMuted(
+                      !context.read<PlaybackConfigViewModel>().muted,
+                    );
+              },
               // onPressed: context.read<VideoConfig>().toggleIsMuted,
             ),
           ),
