@@ -58,22 +58,22 @@ class _VideoPostState extends State<VideoPost> with TickerProviderStateMixin {
       value: _autoplay ? 1.5 : 1.0,
       duration: _animationDuration,
     );
-    context.read<PlaybackConfigViewModel>().setCurrentVideoPost(
-          (state) => state.animationController = _animationController,
-        );
-    context
-        .read<PlaybackConfigViewModel>()
-        .currentAnimationController!
-        .addListener(() {
-      setState(() {});
-    });
+    // context.read<PlaybackConfigViewModel>().setCurrentVideoPost(
+    //       (state) => state.animationController = _animationController,
+    //     );
+    // context
+    //     .read<PlaybackConfigViewModel>()
+    //     .currentAnimationController!
+    //     .addListener(() {
+    //   setState(() {});
+    // });
   }
 
   /// Player를 초기화 및 이벤트 등록
   void _initVideoPlayer() async {
-    _isMute =
-        context.read<PlaybackConfigViewModel>().timelineCount[widget.index];
-    _autoplay = context.read<PlaybackConfigViewModel>().autoplay;
+    // _isMute =
+    //     context.read<PlaybackConfigViewModel>().timelineCount[widget.index];
+    // _autoplay = context.read<PlaybackConfigViewModel>().autoplay;
     _isPaused = !_autoplay;
     await _videoPlayercontroller.initialize();
     await _videoPlayercontroller.setLooping(true);
@@ -85,10 +85,10 @@ class _VideoPostState extends State<VideoPost> with TickerProviderStateMixin {
         : await _videoPlayercontroller.pause();
     kIsWeb ? await _videoPlayercontroller.setVolume(0) : null;
 
-    context.read<PlaybackConfigViewModel>().setCurrentVideoPost((state) {
-      state.videoController = _videoPlayercontroller;
-      state.paused = _isPaused;
-    });
+    // context.read<PlaybackConfigViewModel>().setCurrentVideoPost((state) {
+    //   state.videoController = _videoPlayercontroller;
+    //   state.paused = _isPaused;
+    // });
     setState(() {});
   }
 
@@ -115,10 +115,11 @@ class _VideoPostState extends State<VideoPost> with TickerProviderStateMixin {
   }
 
   void _onTogglePause() async {
-    _isPaused = !context.read<PlaybackConfigViewModel>().currentPaused!;
-    context.read<PlaybackConfigViewModel>().setCurrentVideoPost(
-          (state) => state.paused = _isPaused,
-        );
+    // _isPaused = !context.read<PlaybackConfigViewModel>().currentPaused!;
+    // context.read<PlaybackConfigViewModel>().setCurrentVideoPost(
+    //       (state) => state.paused = _isPaused,
+    //     );
+    _isPaused = !_isPaused;
     _isPaused ? _animationController.reverse() : _animationController.forward();
     _isPaused
         ? await _videoPlayercontroller.pause()
