@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:tiktok_clone/features/videos/models/playback_config_model.dart';
+import 'package:tiktok_clone/features/videos/view_models/playback_config_vm.dart';
 import 'package:tiktok_clone/features/videos/views/widgets/video_post.dart';
 
 class VideoTimelineScreen extends StatefulWidget {
@@ -9,7 +12,8 @@ class VideoTimelineScreen extends StatefulWidget {
 }
 
 class _VideoTimelineScreenState extends State<VideoTimelineScreen> {
-  int _itemCount = 4;
+  late int _itemCount =
+      context.read<PlaybackConfigViewModel>().timelineCountLen;
   final PageController _pageController = PageController();
   final Duration _scrollDuration = const Duration(milliseconds: 150);
   final Curve _scrollCurve = Curves.linear;
@@ -21,13 +25,15 @@ class _VideoTimelineScreenState extends State<VideoTimelineScreen> {
       curve: _scrollCurve,
     );
     if (page == _itemCount - 1) {
-      _itemCount += 4;
+      context.read<PlaybackConfigViewModel>().addAllTimelineCount(
+            PlaybackConfigModel.timelineCountDefault,
+          );
+      _itemCount = context.read<PlaybackConfigViewModel>().timelineCountLen;
       setState(() {});
     }
   }
 
   void _onVideoFinished() {
-    return;
     _pageController.nextPage(
       duration: _scrollDuration,
       curve: _scrollCurve,
@@ -54,8 +60,10 @@ class _VideoTimelineScreenState extends State<VideoTimelineScreen> {
         scrollDirection: Axis.vertical,
         itemCount: _itemCount,
         onPageChanged: _onPageChanged,
-        itemBuilder: (context, index) =>
-            VideoPost(onVideoFinished: _onVideoFinished, index: index),
+        itemBuilder: (context, index) => VideoPost(
+          onVideoFinished: _onVideoFinished,
+          index: index,
+        ),
       ),
     );
   }

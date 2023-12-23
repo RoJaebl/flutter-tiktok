@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'package:tiktok_clone/constants/gaps.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
 import 'package:tiktok_clone/features/discover/discover_screen.dart';
@@ -8,9 +9,9 @@ import 'package:tiktok_clone/features/inbox/inbox_screen.dart';
 import 'package:tiktok_clone/common/widgets/main_navigation/widgets/nav_tab.dart';
 import 'package:tiktok_clone/common/widgets/main_navigation/widgets/post_video_button.dart';
 import 'package:tiktok_clone/features/users/user_profile_screen.dart';
+import 'package:tiktok_clone/features/videos/view_models/playback_config_vm.dart';
 import 'package:tiktok_clone/features/videos/views/video_recording_screen.dart';
 import 'package:tiktok_clone/features/videos/views/video_timeline_screen.dart';
-import 'package:tiktok_clone/common/shared/slide_route.dart';
 import 'package:tiktok_clone/utils.dart';
 
 class MainNavigationScreen extends StatefulWidget {
@@ -43,14 +44,27 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
     setState(() {
       _selectedIndex = index;
     });
+    if (_selectedIndex != 0) _videoPostPaused();
   }
 
-  void _onPostVideoButtonDown(TapDownDetails downDetails) =>
+  void onPostVideoButtonDown(TapDownDetails downDetails) =>
       setState(() => _postAnimate = true);
 
-  void _onPostVideoButtonTap() {
+  void onPostVideoButtonTap() {
+    _videoPostPaused();
     setState(() => _postAnimate = false);
     context.pushNamed(VideoRecordingScreen.routeName);
+  }
+
+  void _videoPostPaused() {
+    context.read<PlaybackConfigViewModel>().currentVideoController?.pause();
+    context
+        .read<PlaybackConfigViewModel>()
+        .currentAnimationController
+        ?.reverse();
+    context.read<PlaybackConfigViewModel>().setCurrentVideoPost(
+          (state) => state.paused = true,
+        );
   }
 
   @override
@@ -112,8 +126,8 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
               ),
               Gaps.h24,
               GestureDetector(
-                onTapDown: _onPostVideoButtonDown,
-                onTap: _onPostVideoButtonTap,
+                onTapDown: onPostVideoButtonDown,
+                onTap: onPostVideoButtonTap,
                 child: PostVideoButton(
                   animate: _postAnimate,
                   inverted: _selectedIndex != 0,

@@ -2,10 +2,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
-import 'package:tiktok_clone/common/widgets/video_configuration/video_config.dart';
 import 'package:tiktok_clone/constants/gaps.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
-import 'package:tiktok_clone/features/videos/models/playback_config_model.dart';
 import 'package:tiktok_clone/features/videos/view_models/playback_config_vm.dart';
 import 'package:tiktok_clone/features/videos/views/widgets/video_button.dart';
 import 'package:tiktok_clone/features/videos/views/widgets/video_comments.dart';
@@ -18,8 +16,11 @@ class VideoPost extends StatefulWidget {
   final Function onVideoFinished;
   final int index;
 
-  const VideoPost(
-      {super.key, required this.onVideoFinished, required this.index});
+  const VideoPost({
+    super.key,
+    required this.onVideoFinished,
+    required this.index,
+  });
 
   @override
   State<VideoPost> createState() => _VideoPostState();
@@ -29,20 +30,15 @@ class _VideoPostState extends State<VideoPost> with TickerProviderStateMixin {
   final VideoPlayerController _videoPlayercontroller =
       VideoPlayerController.asset("assets/videos/sample_video.mp4");
 
-  bool _isPaused = false;
-  bool _isMute = false;
+  late bool _isMute;
+  late bool _autoplay;
+  late bool _isPaused;
   final double _volume = 1.0;
 
   final Duration _animationDuration = const Duration(milliseconds: 200);
 
   /// AnimateController를 초기화 및 이벤트 등록
-  late final AnimationController _animationController = AnimationController(
-    vsync: this,
-    lowerBound: 1.0,
-    upperBound: 1.5,
-    value: 1.5,
-    duration: _animationDuration,
-  );
+  late final AnimationController _animationController;
 
   /// Player가 초기화 되고 영상을 마치면 다음 페이지 콜백
   void _onVideoChange() {
@@ -54,14 +50,45 @@ class _VideoPostState extends State<VideoPost> with TickerProviderStateMixin {
     }
   }
 
+  void _initAnimation() {
+    _animationController = AnimationController(
+      vsync: this,
+      lowerBound: 1.0,
+      upperBound: 1.5,
+      value: _autoplay ? 1.5 : 1.0,
+      duration: _animationDuration,
+    );
+    context.read<PlaybackConfigViewModel>().setCurrentVideoPost(
+          (state) => state.animationController = _animationController,
+        );
+    context
+        .read<PlaybackConfigViewModel>()
+        .currentAnimationController!
+        .addListener(() {
+      setState(() {});
+    });
+  }
+
   /// Player를 초기화 및 이벤트 등록
   void _initVideoPlayer() async {
+    _isMute =
+        context.read<PlaybackConfigViewModel>().timelineCount[widget.index];
+    _autoplay = context.read<PlaybackConfigViewModel>().autoplay;
+    _isPaused = !_autoplay;
     await _videoPlayercontroller.initialize();
     await _videoPlayercontroller.setLooping(true);
+    _isMute
+        ? await _videoPlayercontroller.setVolume(0)
+        : await _videoPlayercontroller.setVolume(_volume);
+    _autoplay
+        ? await _videoPlayercontroller.play()
+        : await _videoPlayercontroller.pause();
     kIsWeb ? await _videoPlayercontroller.setVolume(0) : null;
-    _videoPlayercontroller.addListener(
-      _onVideoChange,
-    );
+
+    context.read<PlaybackConfigViewModel>().setCurrentVideoPost((state) {
+      state.videoController = _videoPlayercontroller;
+      state.paused = _isPaused;
+    });
     setState(() {});
   }
 
@@ -69,49 +96,35 @@ class _VideoPostState extends State<VideoPost> with TickerProviderStateMixin {
   void initState() {
     super.initState();
     _initVideoPlayer();
-
-    context
-        .read<PlaybackConfigViewModel>()
-        .addListener(_onPlaybackConfigChanged);
+    _initAnimation();
   }
 
   @override
   void dispose() {
     _videoPlayercontroller.dispose();
+    _animationController.dispose();
     super.dispose();
-  }
-
-  void _onPlaybackConfigChanged() {
-    if (!mounted) return;
-
-    final muted = context.read<PlaybackConfigViewModel>().muted;
-    if (muted) {
-      _videoPlayercontroller.setVolume(0);
-    } else {
-      _videoPlayercontroller.setVolume(1);
-    }
   }
 
   /// 화면을 완전히 체우면 비디오 재생
   void _onVisibilityChanged(VisibilityInfo visibilityInfo) {
     if (!mounted) return;
-
-    final autoplay = context.read<PlaybackConfigViewModel>().autoplay;
-
-    visibilityInfo.visibleFraction == 1 && !_isPaused && autoplay
+    visibilityInfo.visibleFraction == 1 && !_isPaused
         ? _videoPlayercontroller.play()
         : _videoPlayercontroller.pause();
   }
 
-  void _onTogglePause() => setState(() {
-        _videoPlayercontroller.value.isPlaying
-            ? _videoPlayercontroller.pause()
-            : _videoPlayercontroller.play();
-        _videoPlayercontroller.value.isPlaying
-            ? _animationController.reverse()
-            : _animationController.forward();
-        _isPaused = !_isPaused;
-      });
+  void _onTogglePause() async {
+    _isPaused = !context.read<PlaybackConfigViewModel>().currentPaused!;
+    context.read<PlaybackConfigViewModel>().setCurrentVideoPost(
+          (state) => state.paused = _isPaused,
+        );
+    _isPaused ? _animationController.reverse() : _animationController.forward();
+    _isPaused
+        ? await _videoPlayercontroller.pause()
+        : await _videoPlayercontroller.play();
+    setState(() {});
+  }
 
   void _onCommentTap(BuildContext context) async {
     _videoPlayercontroller.value.isPlaying ? _onTogglePause() : null;
@@ -124,12 +137,16 @@ class _VideoPostState extends State<VideoPost> with TickerProviderStateMixin {
     _onTogglePause();
   }
 
-  void _onToggleMute() => setState(() {
-        _isMute
-            ? _videoPlayercontroller.setVolume(0)
-            : _videoPlayercontroller.setVolume(_volume);
-        _isMute = !_isMute;
-      });
+  void _onToggleMute() async {
+    _isMute = !_isMute;
+    context
+        .read<PlaybackConfigViewModel>()
+        .setTimelineCount(widget.index, _isMute);
+    _isMute
+        ? await _videoPlayercontroller.setVolume(0)
+        : await _videoPlayercontroller.setVolume(_volume);
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -162,7 +179,12 @@ class _VideoPostState extends State<VideoPost> with TickerProviderStateMixin {
                   ),
                   child: AnimatedOpacity(
                     duration: _animationDuration,
-                    opacity: _isPaused ? 0.8 : 0,
+                    opacity: context
+                                .watch<PlaybackConfigViewModel>()
+                                .currentPaused ??
+                            _isPaused
+                        ? 0.8
+                        : 0,
                     child: const FaIcon(
                       FontAwesomeIcons.play,
                       color: Colors.white,
@@ -203,16 +225,12 @@ class _VideoPostState extends State<VideoPost> with TickerProviderStateMixin {
             top: 40,
             child: IconButton(
               icon: FaIcon(
-                context.watch<PlaybackConfigViewModel>().muted
+                _isMute
                     ? FontAwesomeIcons.volumeOff
                     : FontAwesomeIcons.volumeHigh,
                 color: Colors.white,
               ),
-              onPressed: () {
-                context.read<PlaybackConfigViewModel>().setMuted(
-                      !context.read<PlaybackConfigViewModel>().muted,
-                    );
-              },
+              onPressed: _onToggleMute,
               // onPressed: context.read<VideoConfig>().toggleIsMuted,
             ),
           ),
