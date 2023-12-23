@@ -5,8 +5,8 @@ import 'package:provider/provider.dart';
 import 'package:tiktok_clone/common/widgets/video_configuration/video_config.dart';
 import 'package:tiktok_clone/constants/gaps.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
-import 'package:tiktok_clone/features/videos/widgets/video_button.dart';
-import 'package:tiktok_clone/features/videos/widgets/video_comments.dart';
+import 'package:tiktok_clone/features/videos/views/widgets/video_button.dart';
+import 'package:tiktok_clone/features/videos/views/widgets/video_comments.dart';
 import 'package:tiktok_clone/generated/l10n.dart';
 import 'package:tiktok_clone/common/shared/slide_route.dart';
 import 'package:video_player/video_player.dart';
@@ -182,13 +182,14 @@ class _VideoPostState extends State<VideoPost> with TickerProviderStateMixin {
             left: 20,
             top: 40,
             child: IconButton(
-              icon: FaIcon(
-                context.watch<VideoConfig>().isMuted
+              icon: const FaIcon(
+                false
                     ? FontAwesomeIcons.volumeOff
                     : FontAwesomeIcons.volumeHigh,
                 color: Colors.white,
               ),
-              onPressed: context.read<VideoConfig>().toggleIsMuted,
+              onPressed: () {},
+              // onPressed: context.read<VideoConfig>().toggleIsMuted,
             ),
           ),
           Positioned(
