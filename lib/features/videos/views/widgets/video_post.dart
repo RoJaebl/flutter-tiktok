@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:tiktok_clone/constants/gaps.dart';
@@ -12,7 +13,7 @@ import 'package:tiktok_clone/common/shared/slide_route.dart';
 import 'package:video_player/video_player.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
-class VideoPost extends StatefulWidget {
+class VideoPost extends ConsumerStatefulWidget {
   final Function onVideoFinished;
   final int index;
 
@@ -23,10 +24,11 @@ class VideoPost extends StatefulWidget {
   });
 
   @override
-  State<VideoPost> createState() => _VideoPostState();
+  VideoPostState createState() => VideoPostState();
 }
 
-class _VideoPostState extends State<VideoPost> with TickerProviderStateMixin {
+class VideoPostState extends ConsumerState<VideoPost>
+    with TickerProviderStateMixin {
   final VideoPlayerController _videoPlayercontroller =
       VideoPlayerController.asset("assets/videos/sample_video.mp4");
 
@@ -58,22 +60,25 @@ class _VideoPostState extends State<VideoPost> with TickerProviderStateMixin {
       value: _autoplay ? 1.5 : 1.0,
       duration: _animationDuration,
     );
-    // context.read<PlaybackConfigViewModel>().setCurrentVideoPost(
-    //       (state) => state.animationController = _animationController,
-    //     );
-    // context
-    //     .read<PlaybackConfigViewModel>()
-    //     .currentAnimationController!
-    //     .addListener(() {
-    //   setState(() {});
-    // });
+    ref.read(playbackConfigProvider.notifier).setCurrentVideoPost(
+      (state) {
+        state.animationController = _animationController;
+        return state;
+      },
+    );
+    ref
+        .read(playbackConfigProvider)
+        .currentVideoPost
+        .animationController!
+        .addListener(() {
+      setState(() {});
+    });
   }
 
   /// Player를 초기화 및 이벤트 등록
   void _initVideoPlayer() async {
-    // _isMute =
-    //     context.read<PlaybackConfigViewModel>().timelineCount[widget.index];
-    // _autoplay = context.read<PlaybackConfigViewModel>().autoplay;
+    _isMute = ref.read(playbackConfigProvider).timelineCount[widget.index];
+    _autoplay = ref.read(playbackConfigProvider).autoplay;
     _isPaused = !_autoplay;
     await _videoPlayercontroller.initialize();
     await _videoPlayercontroller.setLooping(true);
@@ -85,10 +90,11 @@ class _VideoPostState extends State<VideoPost> with TickerProviderStateMixin {
         : await _videoPlayercontroller.pause();
     kIsWeb ? await _videoPlayercontroller.setVolume(0) : null;
 
-    // context.read<PlaybackConfigViewModel>().setCurrentVideoPost((state) {
-    //   state.videoController = _videoPlayercontroller;
-    //   state.paused = _isPaused;
-    // });
+    ref.read(playbackConfigProvider.notifier).setCurrentVideoPost((state) {
+      state.videoController = _videoPlayercontroller;
+      state.paused = _isPaused;
+      return state;
+    });
     setState(() {});
   }
 
@@ -115,10 +121,11 @@ class _VideoPostState extends State<VideoPost> with TickerProviderStateMixin {
   }
 
   void _onTogglePause() async {
-    // _isPaused = !context.read<PlaybackConfigViewModel>().currentPaused!;
-    // context.read<PlaybackConfigViewModel>().setCurrentVideoPost(
-    //       (state) => state.paused = _isPaused,
-    //     );
+    _isPaused = !ref.read(playbackConfigProvider).currentVideoPost.paused!;
+    ref.read(playbackConfigProvider.notifier).setCurrentVideoPost((state) {
+      state.paused = _isPaused;
+      return state;
+    });
     _isPaused = !_isPaused;
     _isPaused ? _animationController.reverse() : _animationController.forward();
     _isPaused
@@ -180,9 +187,10 @@ class _VideoPostState extends State<VideoPost> with TickerProviderStateMixin {
                   ),
                   child: AnimatedOpacity(
                     duration: _animationDuration,
-                    opacity: context
-                                .watch<PlaybackConfigViewModel>()
-                                .currentPaused ??
+                    opacity: ref
+                                .watch(playbackConfigProvider)
+                                .currentVideoPost
+                                .paused ??
                             _isPaused
                         ? 0.8
                         : 0,

@@ -1,59 +1,68 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tiktok_clone/features/videos/models/playback_config_model.dart';
 import 'package:tiktok_clone/features/videos/repos/playback_config_repo.dart';
-import 'package:video_player/video_player.dart';
 
 class PlaybackConfigViewModel extends Notifier<PlaybackConfigModel> {
   final PlaybackConfigRepository _repository;
 
   PlaybackConfigViewModel(this._repository);
 
-  // bool get muted => _model.muted;
-  // bool get autoplay => _model.autoplay;
-
-  // int get timelineCountLen => _model.timelineCount.length;
-  // TTimelineCount get timelineCount => _model.timelineCount;
-
-  // VideoPlayerController? get currentVideoController =>
-  //     _model.currentVideoPost.videoController;
-  // AnimationController? get currentAnimationController =>
-  //     _model.currentVideoPost.animationController;
-  // bool? get currentPaused => _model.currentVideoPost.paused;
-
   void setMuted(bool value) {
     _repository.setMuted(value);
     state = PlaybackConfigModel(
-        muted: value,
-        autoplay: state.autoplay,
-        timelineCount: state.timelineCount,
-        currentVideoPost: state.currentVideoPost);
+      muted: value,
+      autoplay: state.autoplay,
+      timelineCount: state.timelineCount,
+      currentVideoPost: state.currentVideoPost,
+    );
   }
 
   void setAutoplay(bool value) {
     _repository.setAutoplay(value);
     state = PlaybackConfigModel(
-        muted: state.muted,
-        autoplay: value,
-        timelineCount: state.timelineCount,
-        currentVideoPost: state.currentVideoPost);
+      muted: state.muted,
+      autoplay: value,
+      timelineCount: state.timelineCount,
+      currentVideoPost: state.currentVideoPost,
+    );
   }
 
   void addAllTimelineCount(int count) {
-    state.timelineCount.addAll(
+    var newTimelineCount = state.timelineCount;
+    newTimelineCount.addAll(
       TTimelineCount.filled(
         count,
         state.muted,
       ),
     );
+    state = PlaybackConfigModel(
+      muted: state.muted,
+      autoplay: state.autoplay,
+      timelineCount: newTimelineCount,
+      currentVideoPost: state.currentVideoPost,
+    );
   }
 
   void setTimelineCount(int index, bool muted) {
-    state.timelineCount[index] = muted;
+    var modifyTimelineCount = state.timelineCount;
+    modifyTimelineCount[index] = muted;
+    state = PlaybackConfigModel(
+      muted: state.muted,
+      autoplay: state.autoplay,
+      timelineCount: modifyTimelineCount,
+      currentVideoPost: state.currentVideoPost,
+    );
   }
 
-  void setCurrentVideoPost(void Function(VideoPostStateModel state) setState) {
-    setState(state.currentVideoPost);
+  void setCurrentVideoPost(
+      VideoPostStateModel Function(VideoPostStateModel state) setState) {
+    var newState = setState(state.currentVideoPost);
+    state = PlaybackConfigModel(
+      muted: state.muted,
+      autoplay: state.autoplay,
+      timelineCount: state.timelineCount,
+      currentVideoPost: newState,
+    );
   }
 
   @override

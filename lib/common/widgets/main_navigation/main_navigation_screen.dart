@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
-import 'package:provider/provider.dart';
 import 'package:tiktok_clone/constants/gaps.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
 import 'package:tiktok_clone/features/discover/discover_screen.dart';
@@ -14,7 +14,7 @@ import 'package:tiktok_clone/features/videos/views/video_recording_screen.dart';
 import 'package:tiktok_clone/features/videos/views/video_timeline_screen.dart';
 import 'package:tiktok_clone/utils.dart';
 
-class MainNavigationScreen extends StatefulWidget {
+class MainNavigationScreen extends ConsumerStatefulWidget {
   static const String routeName = "mainNavigation";
 
   final String tab;
@@ -25,10 +25,10 @@ class MainNavigationScreen extends StatefulWidget {
   });
 
   @override
-  State<MainNavigationScreen> createState() => _MainNavigationScreenState();
+  MainNavigationScreenState createState() => MainNavigationScreenState();
 }
 
-class _MainNavigationScreenState extends State<MainNavigationScreen> {
+class MainNavigationScreenState extends ConsumerState<MainNavigationScreen> {
   final List<String> _tabs = [
     "home",
     "discover",
@@ -57,14 +57,18 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
   }
 
   void _videoPostPaused() {
-    context.read<PlaybackConfigViewModel>().currentVideoController?.pause();
-    context
-        .read<PlaybackConfigViewModel>()
-        .currentAnimationController
+    ref.read(playbackConfigProvider).currentVideoPost.videoController?.pause();
+    ref
+        .read(playbackConfigProvider)
+        .currentVideoPost
+        .animationController
         ?.reverse();
-    context.read<PlaybackConfigViewModel>().setCurrentVideoPost(
-          (state) => state.paused = true,
-        );
+    ref.read(playbackConfigProvider.notifier).setCurrentVideoPost(
+      (state) {
+        state.paused = true;
+        return state;
+      },
+    );
   }
 
   @override
