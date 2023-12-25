@@ -18,10 +18,6 @@ import 'package:tiktok_clone/generated/l10n.dart';
 import 'package:tiktok_clone/router.dart';
 
 void main() async {
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
-
   WidgetsFlutterBinding.ensureInitialized();
   await SystemChrome.setPreferredOrientations(
     [
@@ -31,7 +27,9 @@ void main() async {
   SystemChrome.setSystemUIOverlayStyle(
     SystemUiOverlayStyle.dark,
   );
-
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   final preferences = await SharedPreferences.getInstance();
   final repository = PlaybackConfigRepository(preferences);
 
@@ -47,16 +45,16 @@ void main() async {
   );
 }
 
-class TikTokApp extends StatelessWidget {
+class TikTokApp extends ConsumerWidget {
   const TikTokApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     // S.load(const Locale("en"));
     return ValueListenableBuilder(
       valueListenable: lightTheme,
       builder: (context, value, child) => MaterialApp.router(
-        routerConfig: router,
+        routerConfig: ref.watch(routerProvider),
         debugShowCheckedModeBanner: false,
         title: 'TikTok Clone',
         themeMode: value ? ThemeMode.light : ThemeMode.dark,
