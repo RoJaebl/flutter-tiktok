@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:tiktok_clone/constants/gaps.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
 import 'package:tiktok_clone/features/videos/view_models/playback_config_vm.dart';
+import 'package:tiktok_clone/features/videos/view_models/video_post_view_model.dart';
 import 'package:tiktok_clone/features/videos/views/widgets/video_button.dart';
 import 'package:tiktok_clone/features/videos/views/widgets/video_comments.dart';
 import 'package:tiktok_clone/generated/l10n.dart';
@@ -60,17 +61,10 @@ class VideoPostState extends ConsumerState<VideoPost>
       value: _autoplay ? 1.5 : 1.0,
       duration: _animationDuration,
     );
-    ref.read(playbackConfigProvider.notifier).setCurrentVideoPost(
-      (state) {
-        state.animationController = _animationController;
-        return state;
-      },
-    );
     ref
-        .read(playbackConfigProvider)
-        .currentVideoPost
-        .animationController!
-        .addListener(() {
+        .read(videoPostProvider.notifier)
+        .setAnimationController(_animationController);
+    ref.read(videoPostProvider).animationController!.addListener(() {
       setState(() {});
     });
   }
@@ -90,11 +84,10 @@ class VideoPostState extends ConsumerState<VideoPost>
         : await _videoPlayercontroller.pause();
     kIsWeb ? await _videoPlayercontroller.setVolume(0) : null;
 
-    ref.read(playbackConfigProvider.notifier).setCurrentVideoPost((state) {
-      state.videoController = _videoPlayercontroller;
-      state.paused = _isPaused;
-      return state;
-    });
+    ref
+        .read(videoPostProvider.notifier)
+        .setVideoController(_videoPlayercontroller);
+    ref.read(videoPostProvider.notifier).setPaused(_isPaused);
     setState(() {});
   }
 
@@ -121,11 +114,8 @@ class VideoPostState extends ConsumerState<VideoPost>
   }
 
   void _onTogglePause() async {
-    _isPaused = !ref.read(playbackConfigProvider).currentVideoPost.paused!;
-    ref.read(playbackConfigProvider.notifier).setCurrentVideoPost((state) {
-      state.paused = _isPaused;
-      return state;
-    });
+    _isPaused = !ref.read(videoPostProvider).paused;
+    ref.read(videoPostProvider.notifier).setPaused(_isPaused);
     _isPaused = !_isPaused;
     _isPaused ? _animationController.reverse() : _animationController.forward();
     _isPaused
@@ -187,13 +177,7 @@ class VideoPostState extends ConsumerState<VideoPost>
                   ),
                   child: AnimatedOpacity(
                     duration: _animationDuration,
-                    opacity: ref
-                                .watch(playbackConfigProvider)
-                                .currentVideoPost
-                                .paused ??
-                            _isPaused
-                        ? 0.8
-                        : 0,
+                    opacity: ref.watch(videoPostProvider).paused ? 0.8 : 0,
                     child: const FaIcon(
                       FontAwesomeIcons.play,
                       color: Colors.white,

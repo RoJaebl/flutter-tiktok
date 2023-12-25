@@ -31,5 +31,5 @@ class TimelineViewModel extends AsyncNotifier<List<VideoModel>> {
 
 final timelineProvider =
     AsyncNotifierProvider<TimelineViewModel, List<VideoModel>>(
-  () => TimelineViewModel(),
+  TimelineViewModel.new,
 );

@@ -9,60 +9,26 @@ class PlaybackConfigViewModel extends Notifier<PlaybackConfigModel> {
 
   void setMuted(bool value) {
     _repository.setMuted(value);
-    state = PlaybackConfigModel(
-      muted: value,
-      autoplay: state.autoplay,
-      timelineCount: state.timelineCount,
-      currentVideoPost: state.currentVideoPost,
-    );
+    state = state..muted = value;
   }
 
   void setAutoplay(bool value) {
     _repository.setAutoplay(value);
-    state = PlaybackConfigModel(
-      muted: state.muted,
-      autoplay: value,
-      timelineCount: state.timelineCount,
-      currentVideoPost: state.currentVideoPost,
-    );
+    state = state..autoplay = value;
   }
 
   void addAllTimelineCount(int count) {
-    var newTimelineCount = state.timelineCount;
-    newTimelineCount.addAll(
-      TTimelineCount.filled(
-        count,
-        state.muted,
-      ),
-    );
-    state = PlaybackConfigModel(
-      muted: state.muted,
-      autoplay: state.autoplay,
-      timelineCount: newTimelineCount,
-      currentVideoPost: state.currentVideoPost,
-    );
+    state = state
+      ..timelineCount.addAll(
+        TTimelineCount.filled(
+          count,
+          state.muted,
+        ),
+      );
   }
 
-  void setTimelineCount(int index, bool muted) {
-    var modifyTimelineCount = state.timelineCount;
-    modifyTimelineCount[index] = muted;
-    state = PlaybackConfigModel(
-      muted: state.muted,
-      autoplay: state.autoplay,
-      timelineCount: modifyTimelineCount,
-      currentVideoPost: state.currentVideoPost,
-    );
-  }
-
-  void setCurrentVideoPost(
-      VideoPostStateModel Function(VideoPostStateModel state) setState) {
-    var newState = setState(state.currentVideoPost);
-    state = PlaybackConfigModel(
-      muted: state.muted,
-      autoplay: state.autoplay,
-      timelineCount: state.timelineCount,
-      currentVideoPost: newState,
-    );
+  void setTimelineCount(int index, bool value) {
+    state = state..timelineCount[index] = value;
   }
 
   @override
@@ -75,7 +41,6 @@ class PlaybackConfigViewModel extends Notifier<PlaybackConfigModel> {
         _repository.isMuted(),
         growable: true,
       ),
-      currentVideoPost: VideoPostStateModel(),
     );
   }
 }

@@ -9,7 +9,7 @@ import 'package:tiktok_clone/features/inbox/inbox_screen.dart';
 import 'package:tiktok_clone/common/widgets/main_navigation/widgets/nav_tab.dart';
 import 'package:tiktok_clone/common/widgets/main_navigation/widgets/post_video_button.dart';
 import 'package:tiktok_clone/features/users/user_profile_screen.dart';
-import 'package:tiktok_clone/features/videos/view_models/playback_config_vm.dart';
+import 'package:tiktok_clone/features/videos/view_models/video_post_view_model.dart';
 import 'package:tiktok_clone/features/videos/views/video_recording_screen.dart';
 import 'package:tiktok_clone/features/videos/views/video_timeline_screen.dart';
 import 'package:tiktok_clone/utils.dart';
@@ -57,18 +57,9 @@ class MainNavigationScreenState extends ConsumerState<MainNavigationScreen> {
   }
 
   void _videoPostPaused() {
-    ref.read(playbackConfigProvider).currentVideoPost.videoController?.pause();
-    ref
-        .read(playbackConfigProvider)
-        .currentVideoPost
-        .animationController
-        ?.reverse();
-    ref.read(playbackConfigProvider.notifier).setCurrentVideoPost(
-      (state) {
-        state.paused = true;
-        return state;
-      },
-    );
+    ref.read(videoPostProvider).videoController?.pause();
+    ref.read(videoPostProvider).animationController?.reverse();
+    ref.read(videoPostProvider.notifier).setPaused(false);
   }
 
   @override
