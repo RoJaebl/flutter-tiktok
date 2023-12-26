@@ -13,9 +13,9 @@ import 'package:tiktok_clone/features/onboarding/interest_screen.dart';
 import 'package:tiktok_clone/features/videos/views/video_recording_screen.dart';
 
 final routerProvider = Provider((ref) {
-  ref.watch(authState);
+  // ref.watch(authState);
   return GoRouter(
-    initialLocation: "/home",
+    initialLocation: SignUpScreen.routeURL,
     redirect: (context, state) {
       final isLoggedIn = ref.read(authRepo).isLoggedIn;
       if (isLoggedIn) return null;
