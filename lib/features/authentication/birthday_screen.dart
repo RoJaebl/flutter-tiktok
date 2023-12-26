@@ -1,19 +1,19 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tiktok_clone/constants/gaps.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
+import 'package:tiktok_clone/features/authentication/view_models/signup_view_model.dart';
 import 'package:tiktok_clone/features/authentication/widgets/form_button.dart';
-import 'package:tiktok_clone/features/onboarding/interest_screen.dart';
 
-class BirthDayScreen extends StatefulWidget {
+class BirthDayScreen extends ConsumerStatefulWidget {
   const BirthDayScreen({super.key});
 
   @override
-  State<BirthDayScreen> createState() => _BirthDayScreenState();
+  ConsumerState<BirthDayScreen> createState() => _BirthDayScreenState();
 }
 
-class _BirthDayScreenState extends State<BirthDayScreen> {
+class _BirthDayScreenState extends ConsumerState<BirthDayScreen> {
   final TextEditingController _birthdaycontroller = TextEditingController();
   DateTime initDate = DateTime.now().subtract(const Duration(days: 365 * 12));
 
@@ -29,7 +29,10 @@ class _BirthDayScreenState extends State<BirthDayScreen> {
     super.dispose();
   }
 
-  void _onTextTap() => context.goNamed(InterestScreen.routeName);
+  void _onTextTap() {
+    ref.read(signUpProvider.notifier).signUp();
+    // context.goNamed(InterestScreen.routeName);
+  }
 
   void _setTextFieldDate(DateTime date) =>
       _birthdaycontroller.value = TextEditingValue(
@@ -82,7 +85,7 @@ class _BirthDayScreenState extends State<BirthDayScreen> {
             Gaps.v16,
             GestureDetector(
               onTap: _onTextTap,
-              child: const FormButton(disabled: false),
+              child: FormButton(disabled: ref.watch(signUpProvider).isLoading),
             )
           ],
         ),

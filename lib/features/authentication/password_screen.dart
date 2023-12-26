@@ -1,22 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:tiktok_clone/constants/gaps.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
 import 'package:tiktok_clone/features/authentication/birthday_screen.dart';
+import 'package:tiktok_clone/features/authentication/view_models/signup_view_model.dart';
 import 'package:tiktok_clone/features/authentication/widgets/form_button.dart';
 import 'package:tiktok_clone/common/shared/slide_route.dart';
 
 final passwordRegExp = RegExp(
     r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
 
-class PasswordScreen extends StatefulWidget {
+class PasswordScreen extends ConsumerStatefulWidget {
   const PasswordScreen({super.key});
 
   @override
-  State<PasswordScreen> createState() => _PasswordScreenState();
+  ConsumerState<PasswordScreen> createState() => _PasswordScreenState();
 }
 
-class _PasswordScreenState extends State<PasswordScreen> {
+class _PasswordScreenState extends ConsumerState<PasswordScreen> {
   final TextEditingController _passwordcontroller = TextEditingController();
   String _password = "";
   bool _obscureText = true;
@@ -39,12 +41,19 @@ class _PasswordScreenState extends State<PasswordScreen> {
 
   void _onScaffoldTap() => FocusScope.of(context).unfocus();
 
-  void _onSubmit() => _passwordValidText()
-      ? Navigator.push(
-          context,
-          slideRoute(screen: const BirthDayScreen()),
-        )
-      : null;
+  void _onSubmit() {
+    if (!_passwordValidText()) return;
+    final state = ref.read(signUpForm.notifier).state;
+    ref.read(signUpForm.notifier).state = {
+      ...state,
+      "password": _password,
+    };
+
+    Navigator.push(
+      context,
+      slideRoute(screen: const BirthDayScreen()),
+    );
+  }
 
   void _onClearTap() => _passwordcontroller.clear();
 

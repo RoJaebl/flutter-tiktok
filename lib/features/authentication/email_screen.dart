@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tiktok_clone/constants/gaps.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
 import 'package:tiktok_clone/features/authentication/password_screen.dart';
+import 'package:tiktok_clone/features/authentication/view_models/signup_view_model.dart';
 import 'package:tiktok_clone/features/authentication/widgets/form_button.dart';
 import 'package:tiktok_clone/common/shared/slide_route.dart';
 
@@ -16,7 +18,7 @@ class EmailScreenArgs {
 final emailRegExp = RegExp(
     r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
 
-class EmailScreen extends StatefulWidget {
+class EmailScreen extends ConsumerStatefulWidget {
   final String username;
 
   const EmailScreen({
@@ -25,10 +27,10 @@ class EmailScreen extends StatefulWidget {
   });
 
   @override
-  State<EmailScreen> createState() => _EmailScreenState();
+  ConsumerState<EmailScreen> createState() => _EmailScreenState();
 }
 
-class _EmailScreenState extends State<EmailScreen> {
+class _EmailScreenState extends ConsumerState<EmailScreen> {
   final TextEditingController _emailcontroller = TextEditingController();
 
   String _email = "";
@@ -54,12 +56,14 @@ class _EmailScreenState extends State<EmailScreen> {
 
   void _onScaffoldTap() => FocusScope.of(context).unfocus();
 
-  void _onSubmit() => _email.isNotEmpty && _emailValidText() == null
-      ? Navigator.push(
-          context,
-          slideRoute(screen: const PasswordScreen()),
-        )
-      : null;
+  void _onSubmit() {
+    if (_email.isEmpty || _emailValidText() != null) return;
+    ref.read(signUpForm.notifier).state = {"email": _email};
+    Navigator.push(
+      context,
+      slideRoute(screen: const PasswordScreen()),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
