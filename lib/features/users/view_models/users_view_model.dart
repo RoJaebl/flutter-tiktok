@@ -12,7 +12,6 @@ class UsersViewModel extends AsyncNotifier<UserProfileModel> {
 
   @override
   FutureOr<UserProfileModel> build() async {
-    await Future.delayed(const Duration(seconds: 3));
     _usersRepo = ref.read(userRepo);
     _authRepo = ref.read(authRepo);
 
@@ -31,15 +30,29 @@ class UsersViewModel extends AsyncNotifier<UserProfileModel> {
 
     state = const AsyncValue.loading();
     final profile = UserProfileModel(
+      hasAvatar: false,
       bio: "undefined",
       link: "undefined",
       uid: credential.user!.uid,
       name: credential.user!.displayName ?? userForm["name"] ?? "Anon",
       email: credential.user!.email ?? "anon@anon.com",
       birthday: userForm["birthday"] ?? "undefined",
+      avatarURL: "",
     );
     await _usersRepo.createProfile(profile);
     state = AsyncValue.data(profile);
+  }
+
+  Future<void> onAvatarUpload() async {
+    if (state.value == null) return;
+    state = AsyncValue.data(state.value!.copyWith(hasAvatar: true));
+    await _usersRepo.updateUser(state.value!.uid, {"hasAvatar": true});
+  }
+
+  Future<void> onAvatarDownload(String url) async {
+    if (state.value == null) return;
+    state = AsyncValue.data(state.value!.copyWith(avatarURL: url));
+    await _usersRepo.updateUser(state.value!.uid, {"avatarURL": url});
   }
 }
 
