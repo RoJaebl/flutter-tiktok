@@ -44,7 +44,7 @@ class _TutorialScreenState extends State<TutorialScreen> {
     }
   }
 
-  void _onEnterAppTap() => context.go("/home");
+  void _onEnterAppTap() => context.go("/profile");
 
   @override
   Widget build(BuildContext context) {

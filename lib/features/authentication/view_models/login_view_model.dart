@@ -24,7 +24,7 @@ class LoginViewModel extends AsyncNotifier<void> {
     if (state.hasError) {
       showFirebaseErrorSnack(context, state.error);
     } else {
-      context.go("/home");
+      context.go("/profile");
     }
   }
 }
