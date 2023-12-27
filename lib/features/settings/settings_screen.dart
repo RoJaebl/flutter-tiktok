@@ -41,7 +41,7 @@ class SettingScreen extends ConsumerWidget {
               ),
             ),
             SwitchListTile.adaptive(
-              value: ref.watch(playbackConfigProvider).muted,
+              value: ref.watch(playbackConfigProvider).value!.muted,
               onChanged: (value) =>
                   ref.read(playbackConfigProvider.notifier).setMuted(value),
               title: const Text(
@@ -50,7 +50,7 @@ class SettingScreen extends ConsumerWidget {
               subtitle: const Text("Videos will be muted by default"),
             ),
             SwitchListTile.adaptive(
-              value: ref.watch(playbackConfigProvider).autoplay,
+              value: ref.watch(playbackConfigProvider).value!.autoplay,
               onChanged: (value) =>
                   ref.read(playbackConfigProvider.notifier).setAutoplay(value),
               title: const Text(

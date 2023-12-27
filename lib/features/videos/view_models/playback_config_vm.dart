@@ -1,44 +1,57 @@
+import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tiktok_clone/features/videos/models/playback_config_model.dart';
 import 'package:tiktok_clone/features/videos/repos/playback_config_repo.dart';
 
-class PlaybackConfigViewModel extends Notifier<PlaybackConfigModel> {
-  final PlaybackConfigRepository _repository;
+class PlaybackConfigViewModel extends AsyncNotifier<PlaybackConfigModel> {
+  late final PlaybackConfigRepository _playbackRepo;
 
-  PlaybackConfigViewModel(this._repository);
-
-  void setMuted(bool value) {
-    _repository.setMuted(value);
-    state = state..muted = value;
+  Future<void> setMuted(bool value) async {
+    state = const AsyncValue.loading();
+    await _playbackRepo.setMuted(value);
+    final playback = state.value!;
+    state = AsyncValue.data(playback..muted = value);
   }
 
-  void setAutoplay(bool value) {
-    _repository.setAutoplay(value);
-    state = state..autoplay = value;
+  Future<void> setAutoplay(bool value) async {
+    state = const AsyncValue.loading();
+    await _playbackRepo.setAutoplay(value);
+    final playback = state.value!;
+    state = AsyncValue.data(playback..autoplay = value);
   }
 
   void addAllTimelineCount(int count) {
-    state = state
-      ..timelineCount.addAll(
-        TTimelineCount.filled(
-          count,
-          state.muted,
+    state = const AsyncValue.loading();
+    final playback = state.value!;
+    state = AsyncValue.data(
+      playback
+        ..timelineCount.addAll(
+          TTimelineCount.filled(
+            count,
+            playback.muted,
+          ),
         ),
-      );
+    );
   }
 
   void setTimelineCount(int index, bool value) {
-    state = state..timelineCount[index] = value;
+    final playback = state.value!;
+    state = AsyncValue.data(
+      playback..timelineCount[index] = value,
+    );
   }
 
   @override
-  PlaybackConfigModel build() {
+  FutureOr<PlaybackConfigModel> build() async {
+    _playbackRepo = ref.read(playbackRepo);
+
     return PlaybackConfigModel(
-      muted: _repository.isMuted(),
-      autoplay: _repository.isAutoplay(),
+      muted: await _playbackRepo.isMuted(),
+      autoplay: await _playbackRepo.isAutoplay(),
       timelineCount: TTimelineCount.filled(
         PlaybackConfigModel.timelineCountDefault,
-        _repository.isMuted(),
+        await _playbackRepo.isMuted(),
         growable: true,
       ),
     );
@@ -46,6 +59,6 @@ class PlaybackConfigViewModel extends Notifier<PlaybackConfigModel> {
 }
 
 final playbackConfigProvider =
-    NotifierProvider<PlaybackConfigViewModel, PlaybackConfigModel>(
-  () => throw UnimplementedError(),
+    AsyncNotifierProvider<PlaybackConfigViewModel, PlaybackConfigModel>(
+  PlaybackConfigViewModel.new,
 );

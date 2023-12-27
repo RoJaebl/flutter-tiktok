@@ -21,7 +21,7 @@ class TimelineViewModel extends AsyncNotifier<List<VideoModel>> {
   @override
   FutureOr<List<VideoModel>> build() async {
     await Future.delayed(
-      const Duration(seconds: 10),
+      const Duration(seconds: 5),
       () {},
     );
     // throw Exception("OMG cant fetch!"); /// 패치가 실패했을때의 시나리오

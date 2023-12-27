@@ -5,6 +5,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:tiktok_clone/constants/gaps.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
+import 'package:tiktok_clone/features/videos/repos/playback_config_repo.dart';
 import 'package:tiktok_clone/features/videos/view_models/playback_config_vm.dart';
 import 'package:tiktok_clone/features/videos/view_models/video_post_view_model.dart';
 import 'package:tiktok_clone/features/videos/views/widgets/video_button.dart';
@@ -33,8 +34,8 @@ class VideoPostState extends ConsumerState<VideoPost>
   final VideoPlayerController _videoPlayercontroller =
       VideoPlayerController.asset("assets/videos/sample_video.mp4");
 
-  late bool _isMute;
-  late bool _autoplay;
+  late bool _isMute = false;
+  late bool _autoplay = false;
   late bool _isPaused;
   final double _volume = 1.0;
 
@@ -71,8 +72,11 @@ class VideoPostState extends ConsumerState<VideoPost>
 
   /// Player를 초기화 및 이벤트 등록
   void _initVideoPlayer() async {
-    _isMute = ref.read(playbackConfigProvider).timelineCount[widget.index];
-    _autoplay = ref.read(playbackConfigProvider).autoplay;
+    _isMute =
+        ref.read(playbackConfigProvider).value?.timelineCount[widget.index] ??
+            await ref.read(playbackRepo).isMuted();
+    _autoplay = ref.read(playbackConfigProvider).value?.autoplay ??
+        await ref.read(playbackRepo).isAutoplay();
     _isPaused = !_autoplay;
     await _videoPlayercontroller.initialize();
     await _videoPlayercontroller.setLooping(true);

@@ -13,7 +13,8 @@ class VideoTimelineScreen extends ConsumerStatefulWidget {
 }
 
 class VideoTimelineScreenState extends ConsumerState<VideoTimelineScreen> {
-  late int _itemCount = ref.read(playbackConfigProvider).timelineCount.length;
+  late int _itemCount =
+      ref.read(playbackConfigProvider).value!.timelineCount.length;
   final PageController _pageController = PageController();
   final Duration _scrollDuration = const Duration(milliseconds: 150);
   final Curve _scrollCurve = Curves.linear;
@@ -28,7 +29,7 @@ class VideoTimelineScreenState extends ConsumerState<VideoTimelineScreen> {
       ref.read(playbackConfigProvider.notifier).addAllTimelineCount(
             PlaybackConfigModel.timelineCountDefault,
           );
-      _itemCount = ref.read(playbackConfigProvider).timelineCount.length;
+      _itemCount = ref.read(playbackConfigProvider).value!.timelineCount.length;
       setState(() {});
     }
   }
