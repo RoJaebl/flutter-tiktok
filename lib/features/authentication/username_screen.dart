@@ -1,18 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tiktok_clone/common/shared/slide_route.dart';
 import 'package:tiktok_clone/constants/gaps.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
 import 'package:tiktok_clone/features/authentication/email_screen.dart';
+import 'package:tiktok_clone/features/authentication/view_models/signup_view_model.dart';
 import 'package:tiktok_clone/features/authentication/widgets/form_button.dart';
 
-class UserNameScreen extends StatefulWidget {
+class UserNameScreen extends ConsumerStatefulWidget {
   const UserNameScreen({super.key});
 
   @override
-  State<UserNameScreen> createState() => _UserNameScreenState();
+  ConsumerState<UserNameScreen> createState() => _UserNameScreenState();
 }
 
-class _UserNameScreenState extends State<UserNameScreen> {
+class _UserNameScreenState extends ConsumerState<UserNameScreen> {
   final TextEditingController _usernamecontroller = TextEditingController();
 
   String _username = "";
@@ -33,12 +35,16 @@ class _UserNameScreenState extends State<UserNameScreen> {
     super.dispose();
   }
 
-  void _onTextTap() => _username.isNotEmpty
-      ? Navigator.push(
-          context,
-          slideRoute(screen: EmailScreen(username: _username)),
-        )
-      : null;
+  void _onTextTap() {
+    ref.read(signUpForm.notifier).state = {
+      "name": _username,
+    };
+    if (_username.isEmpty) return;
+    Navigator.push(
+      context,
+      slideRoute(screen: EmailScreen(username: _username)),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
