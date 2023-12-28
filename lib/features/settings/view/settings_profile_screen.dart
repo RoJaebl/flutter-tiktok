@@ -9,11 +9,12 @@ class SettingProfileScreen extends ConsumerWidget {
 
   void _onBioDescription(BuildContext context) {
     debugPrint("editor");
-    Navigator.push(
+    Navigator.pushAndRemoveUntil(
       context,
       slideRoute(
         screen: const SettingProfileEditor(),
       ),
+      (route) => false,
     );
   }
 
