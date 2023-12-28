@@ -4,7 +4,8 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:tiktok_clone/constants/breakpoints.dart';
 import 'package:tiktok_clone/constants/gaps.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
-import 'package:tiktok_clone/features/settings/settings_screen.dart';
+import 'package:tiktok_clone/features/settings/view/settings_profile_screen.dart';
+import 'package:tiktok_clone/features/settings/view/settings_screen.dart';
 import 'package:tiktok_clone/features/users/view/widgets/avatar.dart';
 import 'package:tiktok_clone/features/users/view_models/users_view_model.dart';
 import 'package:tiktok_clone/features/users/view/widgets/persistent_tab_bar.dart';
@@ -28,6 +29,12 @@ class UserProfileScreen extends ConsumerStatefulWidget {
 class _UserProfileScreenState extends ConsumerState<UserProfileScreen> {
   void _onGearPressed() => Navigator.of(context).push(
         slideRoute(screen: const SettingScreen()),
+      );
+
+  void _onEditPressed() => Navigator.of(context).push(
+        slideRoute(
+          screen: const SettingProfileScreen(),
+        ),
       );
 
   @override
@@ -54,6 +61,13 @@ class _UserProfileScreenState extends ConsumerState<UserProfileScreen> {
                           data.name,
                         ),
                         actions: [
+                          IconButton(
+                            onPressed: _onEditPressed,
+                            icon: const FaIcon(
+                              FontAwesomeIcons.pen,
+                              size: Sizes.size20,
+                            ),
+                          ),
                           IconButton(
                             onPressed: _onGearPressed,
                             icon: const FaIcon(

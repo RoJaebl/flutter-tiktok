@@ -5,7 +5,6 @@ import 'package:tiktok_clone/constants/breakpoints.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
 import 'package:tiktok_clone/features/inbox/activity_screen.dart';
 import 'package:tiktok_clone/features/inbox/chats_screen.dart';
-import 'package:tiktok_clone/common/shared/slide_route.dart';
 
 class InboxScreen extends StatelessWidget {
   const InboxScreen({super.key});
