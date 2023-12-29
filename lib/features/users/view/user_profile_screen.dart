@@ -27,6 +27,7 @@ class UserProfileScreen extends ConsumerStatefulWidget {
 }
 
 class _UserProfileScreenState extends ConsumerState<UserProfileScreen> {
+  bool _textOpen = false;
   void _onGearPressed() => Navigator.of(context).push(
         slideRoute(screen: const SettingScreen()),
       );
@@ -36,6 +37,10 @@ class _UserProfileScreenState extends ConsumerState<UserProfileScreen> {
           screen: const SettingProfileScreen(),
         ),
       );
+
+  void _onToggleTextAccordion() => setState(() {
+        _textOpen = !_textOpen;
+      });
 
   @override
   Widget build(BuildContext context) {
@@ -139,25 +144,46 @@ class _UserProfileScreenState extends ConsumerState<UserProfileScreen> {
                                   width: 300,
                                 ),
                                 Gaps.v14,
-                                const SizedBox(
+                                SizedBox(
                                   width: 300,
-                                  child: Text(
-                                    "All highlights and where to watch live matches on FIFA+ I wonder how it would look",
-                                    textAlign: TextAlign.center,
+                                  child: Column(
+                                    children: [
+                                      Text(
+                                        data.bio,
+                                        textAlign: TextAlign.center,
+                                        maxLines: _textOpen ? null : 3,
+                                      ),
+                                      TextButton(
+                                        onPressed: _onToggleTextAccordion,
+                                        style: ButtonStyle(
+                                          overlayColor:
+                                              MaterialStateColor.resolveWith(
+                                            (states) => Colors.transparent,
+                                          ),
+                                          enableFeedback: false,
+                                        ),
+                                        child: Text(
+                                          _textOpen ? "접기" : "...더보기",
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .labelSmall,
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
                                 Gaps.v14,
-                                const Row(
+                                Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    FaIcon(
+                                    const FaIcon(
                                       FontAwesomeIcons.link,
                                       size: Sizes.size12,
                                     ),
                                     Gaps.h4,
                                     Text(
-                                      "https://nomadcorders.co",
-                                      style: TextStyle(
+                                      data.link,
+                                      style: const TextStyle(
                                         fontWeight: FontWeight.w600,
                                       ),
                                     ),

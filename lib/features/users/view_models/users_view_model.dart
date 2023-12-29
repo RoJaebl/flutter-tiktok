@@ -54,6 +54,41 @@ class UsersViewModel extends AsyncNotifier<UserProfileModel> {
     state = AsyncValue.data(state.value!.copyWith(avatarURL: url));
     await _usersRepo.updateUser(state.value!.uid, {"avatarURL": url});
   }
+
+  Future<void> onBioUpload(String bio) async {
+    if (state.value == null) return;
+    state = AsyncValue.data(state.value!.copyWith(bio: bio));
+    await _usersRepo.updateUser(state.value!.uid, {"bio": bio});
+  }
+
+  Future<void> onUpdateUser({
+    String? uid,
+    String? email,
+    String? name,
+    String? bio,
+    String? link,
+    String? birthday,
+    bool? hasAvatar,
+    String? avatarURL,
+  }) async {
+    if (state.value == null) return;
+    state = AsyncValue.data(
+      state.value!.copyWith(
+        uid: uid ?? state.value!.uid,
+        email: email ?? state.value!.email,
+        name: name ?? state.value!.name,
+        bio: bio ?? state.value!.bio,
+        link: link ?? state.value!.link,
+        birthday: birthday ?? state.value!.birthday,
+        hasAvatar: hasAvatar ?? state.value!.hasAvatar,
+        avatarURL: avatarURL ?? state.value!.avatarURL,
+      ),
+    );
+    await _usersRepo.updateUser(
+      state.value!.uid,
+      state.value!.toJson(),
+    );
+  }
 }
 
 final usersProvider = AsyncNotifierProvider<UsersViewModel, UserProfileModel>(

@@ -38,7 +38,6 @@ class _EmailScreenState extends ConsumerState<EmailScreen> {
   @override
   void initState() {
     super.initState();
-
     _emailcontroller.addListener(() {
       setState(() => _email = _emailcontroller.text);
     });

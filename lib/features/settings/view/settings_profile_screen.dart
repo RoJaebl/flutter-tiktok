@@ -1,24 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:tiktok_clone/common/shared/slide_route.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
 import 'package:tiktok_clone/features/settings/view/widgets/settings_profile_editor.dart';
+import 'package:tiktok_clone/features/settings/view/widgets/settings_profile_editor_detail.dart';
+import 'package:tiktok_clone/features/settings/view_models/setting_profile_view_model.dart';
 
 class SettingProfileScreen extends ConsumerWidget {
   const SettingProfileScreen({super.key});
-
-  void _onBioDescription(BuildContext context) {
-    debugPrint("editor");
-    Navigator.push(
-      context,
-      slideRoute(
-        screen: const SettingProfileEditor(),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final user = ref.watch(settingProfileProvider.notifier).getUserModel();
+
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -27,7 +19,7 @@ class SettingProfileScreen extends ConsumerWidget {
         ),
       ),
       body: Center(
-        child: Scrollbar(
+        child: SingleChildScrollView(
           child: Container(
             width: MediaQuery.of(context).size.width,
             margin: const EdgeInsets.all(
@@ -49,31 +41,9 @@ class SettingProfileScreen extends ConsumerWidget {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                GestureDetector(
-                  onTap: () => _onBioDescription(context),
-                  child: FractionallySizedBox(
-                    widthFactor: 1,
-                    child: Container(
-                      margin: const EdgeInsets.symmetric(
-                        horizontal: Sizes.size10,
-                      ),
-                      padding: const EdgeInsets.symmetric(
-                        vertical: Sizes.size5,
-                      ),
-                      decoration: const BoxDecoration(),
-                      child: const Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "소개",
-                          ),
-                          Text(
-                            "반가워요",
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
+                ProfileEditor(
+                  editType: EEdittingType.bio,
+                  text: user.bio,
                 ),
                 Container(
                   margin: const EdgeInsets.symmetric(
@@ -87,33 +57,9 @@ class SettingProfileScreen extends ConsumerWidget {
                     ),
                   )),
                 ),
-                GestureDetector(
-                  onTap: () {
-                    print("링크");
-                  },
-                  child: FractionallySizedBox(
-                    widthFactor: 1,
-                    child: Container(
-                      margin: const EdgeInsets.symmetric(
-                        horizontal: Sizes.size10,
-                      ),
-                      padding: const EdgeInsets.symmetric(
-                        vertical: Sizes.size5,
-                      ),
-                      decoration: const BoxDecoration(),
-                      child: const Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "소개",
-                          ),
-                          Text(
-                            "반가워요",
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
+                ProfileEditor(
+                  editType: EEdittingType.link,
+                  text: user.link,
                 ),
               ],
             ),
