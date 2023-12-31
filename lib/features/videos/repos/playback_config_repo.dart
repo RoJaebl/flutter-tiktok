@@ -4,37 +4,27 @@ import 'package:shared_preferences/shared_preferences.dart';
 class PlaybackConfigRepository {
   static const String _autoplay = "autoplay";
   static const String _muted = "muted";
-  late final Future<SharedPreferences> _preferences;
+  late final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
 
-  PlaybackConfigRepository(this._preferences);
+  PlaybackConfigRepository();
 
   Future<void> setMuted(bool value) async {
-    await _preferences.then(
-      (preference) => preference.setBool(_muted, value),
-    );
+    await _prefs.then((prefs) async => await prefs.setBool(_muted, value));
   }
 
   Future<void> setAutoplay(bool value) async {
-    await _preferences.then(
-      (preference) => preference.setBool(_autoplay, value),
-    );
+    await _prefs.then((prefs) async => await prefs.setBool(_autoplay, value));
   }
 
   Future<bool> isMuted() async {
-    return await _preferences.then(
-      (preference) => preference.getBool(_muted) ?? false,
-    );
+    return await _prefs.then((prefs) => prefs.getBool(_muted) ?? false);
   }
 
   Future<bool> isAutoplay() async {
-    return await _preferences.then(
-      (preference) => preference.getBool(_autoplay) ?? false,
-    );
+    return await _prefs.then((prefs) => prefs.getBool(_autoplay) ?? false);
   }
 }
 
 final playbackRepo = Provider(
-  (ref) => PlaybackConfigRepository(
-    SharedPreferences.getInstance(),
-  ),
+  (ref) => PlaybackConfigRepository(),
 );
