@@ -20,8 +20,17 @@ export const onVideoCreated = functions.firestore
       `/tmp/${snapshot.id}.jpg`, // 해당 이름으로 파일을 저장한다.
     ]);
     const storage = admin.storage();
-    await storage.bucket().upload(`/tmp/${snapshot.id}.jpg`, {
+    const [file, _] = await storage.bucket().upload(`/tmp/${snapshot.id}.jpg`, {
       // 구글 클라우드 서버에 저장된 영상을 업로드 한다.
       destination: `thumbnails/${snapshot.id}.jpg`, // 업로드의 경로는 입력한다.
     });
+    await file.makePublic(); // 업로드한 영상을 공개로 설정한다.
+    await snapshot.ref.update({ thumbnailUrl: file.publicUrl() }); // 공개로 설정된 영상의 URL를 업데이트 한다.
+    const db = admin.firestore();
+    await db
+      .collection("users")
+      .doc(video.creatorUid)
+      .collection("videos")
+      .doc(snapshot.id)
+      .set({ thumbnailUrl: file.publicUrl(), videoId: snapshot.id });
   });
