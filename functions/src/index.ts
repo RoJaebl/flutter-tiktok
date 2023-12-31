@@ -6,5 +6,22 @@ admin.initializeApp();
 export const onVideoCreated = functions.firestore
   .document("videos/{videoId}")
   .onCreate(async (snapshot, context) => {
-    await snapshot.ref.update({ hello: "from functions" });
+    const spawn = require("child-process-promise").spawn;
+    const video = snapshot.data();
+    await spawn("ffmpeg", [
+      "-i",
+      video.fileUrl,
+      "-ss",
+      "00:00:01.000", // 1초 시간대의 프레임을 가져온다.
+      "-vframes",
+      "1", // 가져온 프레임의 한개를 사용한다.
+      "-vf",
+      "scale=150:-1", // 스케일을 너비 150, 높이는 그에 맞추어 비유을 조정한다.
+      `/tmp/${snapshot.id}.jpg`, // 해당 이름으로 파일을 저장한다.
+    ]);
+    const storage = admin.storage();
+    await storage.bucket().upload(`/tmp/${snapshot.id}.jpg`, {
+      // 구글 클라우드 서버에 저장된 영상을 업로드 한다.
+      destination: `thumbnails/${snapshot.id}.jpg`, // 업로드의 경로는 입력한다.
+    });
   });
