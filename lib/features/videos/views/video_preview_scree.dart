@@ -86,6 +86,15 @@ class VideoPreviewScreenState extends ConsumerState<VideoPreviewScreen>
         );
   }
 
+  void _onDragDescription(DragUpdateDetails details) {
+    if (-20.0 < details.delta.dy) {
+      _animationController.forward();
+    }
+    if (20.0 < details.delta.dy) {
+      _animationController.reverse();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -116,15 +125,7 @@ class VideoPreviewScreenState extends ConsumerState<VideoPreviewScreen>
       ),
       body: _videoPlayerController.value.isInitialized
           ? GestureDetector(
-              onVerticalDragUpdate: (details) {
-                if (-20.0 < details.delta.dy) {
-                  _animationController.forward();
-                }
-                if (20.0 < details.delta.dy) {
-                  _animationController.reverse();
-                }
-              },
-              onVerticalDragEnd: (details) {},
+              onVerticalDragUpdate: _onDragDescription,
               child: Stack(
                 children: [
                   Positioned.fill(
