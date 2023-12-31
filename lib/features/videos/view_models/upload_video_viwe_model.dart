@@ -17,7 +17,8 @@ class UploadVideosViweModel extends AsyncNotifier<void> {
     _repository = ref.read(videosRepo);
   }
 
-  Future<void> uploadVideo(File video, BuildContext context) async {
+  Future<void> uploadVideo(File video, BuildContext context,
+      {String? title, String? description}) async {
     final user = ref.read(authRepo).user!;
     final userProfile = ref.read(usersProvider).value;
     if (userProfile != null) {
@@ -31,8 +32,8 @@ class UploadVideosViweModel extends AsyncNotifier<void> {
           if (task.metadata != null) {
             await _repository.saveVideo(
               VideoModel(
-                  title: "From Flutter!",
-                  description: "Hell yeah!",
+                  title: title ?? "",
+                  description: description ?? "",
                   fileUrl: await task.ref.getDownloadURL(),
                   thumbnailUrl: "thumbnailUrl",
                   creatorUid: user.uid,
