@@ -26,7 +26,6 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-
   runApp(
     const ProviderScope(
       child: TikTokApp(),
@@ -36,7 +35,6 @@ void main() async {
 
 class TikTokApp extends ConsumerWidget {
   const TikTokApp({super.key});
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     // S.load(const Locale("en"));
