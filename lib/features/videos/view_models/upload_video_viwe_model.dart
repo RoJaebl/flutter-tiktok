@@ -32,6 +32,7 @@ class UploadVideosViweModel extends AsyncNotifier<void> {
           if (task.metadata != null) {
             await _repository.saveVideo(
               VideoModel(
+                  id: "",
                   title: title ?? "",
                   description: description ?? "",
                   fileUrl: await task.ref.getDownloadURL(),

@@ -2,18 +2,16 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:provider/provider.dart';
 import 'package:tiktok_clone/constants/gaps.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
 import 'package:tiktok_clone/features/users/view_models/users_view_model.dart';
 import 'package:tiktok_clone/features/videos/models/video_model.dart';
-import 'package:tiktok_clone/features/videos/repos/playback_config_repo.dart';
 import 'package:tiktok_clone/features/videos/view_models/playback_config_vm.dart';
 import 'package:tiktok_clone/features/videos/view_models/video_post_view_model.dart';
+import 'package:tiktok_clone/features/videos/view_models/video_post_view_models.dart';
 import 'package:tiktok_clone/features/videos/views/widgets/video_button.dart';
 import 'package:tiktok_clone/features/videos/views/widgets/video_comments.dart';
 import 'package:tiktok_clone/generated/l10n.dart';
-import 'package:tiktok_clone/common/shared/slide_route.dart';
 import 'package:video_player/video_player.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
@@ -74,13 +72,14 @@ class VideoPostState extends ConsumerState<VideoPost>
     });
   }
 
+  void _onLikeTap() {
+    ref.read(videoPostsProvider(widget.videoData.id).notifier).likeVideo();
+  }
+
   /// Player를 초기화 및 이벤트 등록
   void _initVideoPlayer() async {
-    _isMute =
-        // ref.read(playbackConfigProvider).value?.timelineCount[widget.index] ??
-        await ref.read(playbackRepo).isMuted();
-    _autoplay = ref.read(playbackConfigProvider).value?.autoplay ??
-        await ref.read(playbackRepo).isAutoplay();
+    _isMute = ref.read(playbackConfigProvider).value?.muted ?? false;
+    _autoplay = ref.read(playbackConfigProvider).value?.autoplay ?? false;
     _isPaused = !_autoplay;
     await _videoPlayercontroller.initialize();
     await _videoPlayercontroller.setLooping(true);
@@ -249,11 +248,14 @@ class VideoPostState extends ConsumerState<VideoPost>
                   ),
                 ),
                 Gaps.v24,
-                VideoButton(
-                  icon: FontAwesomeIcons.solidHeart,
-                  text: S.of(context).likeCount(
-                        widget.videoData.likes,
-                      ),
+                GestureDetector(
+                  onTap: _onLikeTap,
+                  child: VideoButton(
+                    icon: FontAwesomeIcons.solidHeart,
+                    text: S.of(context).likeCount(
+                          widget.videoData.likes,
+                        ),
+                  ),
                 ),
                 Gaps.v24,
                 GestureDetector(

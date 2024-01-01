@@ -40,7 +40,9 @@ class VideoTimelineScreenState extends ConsumerState<VideoTimelineScreen> {
     super.dispose();
   }
 
-  Future<void> _onRefres() => Future.delayed(const Duration(seconds: 5));
+  Future<void> _onRefres() {
+    return ref.watch(timelineProvider.notifier).refresh();
+  }
 
   @override
   Widget build(BuildContext context) {

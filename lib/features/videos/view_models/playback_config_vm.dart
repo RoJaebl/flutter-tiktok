@@ -7,6 +7,16 @@ import 'package:tiktok_clone/features/videos/repos/playback_config_repo.dart';
 class PlaybackConfigViewModel extends AsyncNotifier<PlaybackConfigModel> {
   late final PlaybackConfigRepository _playbackRepo;
 
+  @override
+  FutureOr<PlaybackConfigModel> build() async {
+    _playbackRepo = await ref.read(playbackRepo);
+
+    return PlaybackConfigModel(
+      muted: _playbackRepo.isMuted(),
+      autoplay: _playbackRepo.isAutoplay(),
+    );
+  }
+
   Future<void> setMuted(bool value) async {
     state = const AsyncValue.loading();
     await _playbackRepo.setMuted(value);
@@ -17,16 +27,6 @@ class PlaybackConfigViewModel extends AsyncNotifier<PlaybackConfigModel> {
     state = const AsyncValue.loading();
     await _playbackRepo.setAutoplay(value);
     state = AsyncValue.data(state.value!..autoplay = value);
-  }
-
-  @override
-  FutureOr<PlaybackConfigModel> build() async {
-    _playbackRepo = ref.read(playbackRepo);
-
-    return PlaybackConfigModel(
-      muted: await _playbackRepo.isMuted(),
-      autoplay: await _playbackRepo.isAutoplay(),
-    );
   }
 }
 
