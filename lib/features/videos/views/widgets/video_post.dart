@@ -64,12 +64,12 @@ class VideoPostState extends ConsumerState<VideoPost>
       value: _autoplay ? 1.5 : 1.0,
       duration: _animationDuration,
     );
-    ref
-        .read(videoPostProvider.notifier)
-        .setAnimationController(_animationController);
-    ref.read(videoPostProvider).animationController!.addListener(() {
-      setState(() {});
-    });
+    // ref
+    //     .read(videoPostProvider.notifier)
+    //     .setAnimationController(_animationController);
+    // ref.read(videoPostProvider).animationController?.addListener(() {
+    //   setState(() {});
+    // });
   }
 
   void _onLikeTap() {
