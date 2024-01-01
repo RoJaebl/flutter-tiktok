@@ -5,6 +5,8 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:tiktok_clone/constants/gaps.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
+import 'package:tiktok_clone/features/users/view_models/users_view_model.dart';
+import 'package:tiktok_clone/features/videos/models/video_model.dart';
 import 'package:tiktok_clone/features/videos/repos/playback_config_repo.dart';
 import 'package:tiktok_clone/features/videos/view_models/playback_config_vm.dart';
 import 'package:tiktok_clone/features/videos/view_models/video_post_view_model.dart';
@@ -17,12 +19,14 @@ import 'package:visibility_detector/visibility_detector.dart';
 
 class VideoPost extends ConsumerStatefulWidget {
   final Function onVideoFinished;
+  final VideoModel videoData;
   final int index;
 
   const VideoPost({
     super.key,
     required this.onVideoFinished,
     required this.index,
+    required this.videoData,
   });
 
   @override
@@ -73,8 +77,8 @@ class VideoPostState extends ConsumerState<VideoPost>
   /// Player를 초기화 및 이벤트 등록
   void _initVideoPlayer() async {
     _isMute =
-        ref.read(playbackConfigProvider).value?.timelineCount[widget.index] ??
-            await ref.read(playbackRepo).isMuted();
+        // ref.read(playbackConfigProvider).value?.timelineCount[widget.index] ??
+        await ref.read(playbackRepo).isMuted();
     _autoplay = ref.read(playbackConfigProvider).value?.autoplay ??
         await ref.read(playbackRepo).isAutoplay();
     _isPaused = !_autoplay;
@@ -141,9 +145,6 @@ class VideoPostState extends ConsumerState<VideoPost>
 
   void _onToggleMute() async {
     _isMute = !_isMute;
-    context
-        .read<PlaybackConfigViewModel>()
-        .setTimelineCount(widget.index, _isMute);
     _isMute
         ? await _videoPlayercontroller.setVolume(0)
         : await _videoPlayercontroller.setVolume(_volume);
@@ -160,8 +161,9 @@ class VideoPostState extends ConsumerState<VideoPost>
           Positioned.fill(
             child: _videoPlayercontroller.value.isInitialized
                 ? VideoPlayer(_videoPlayercontroller)
-                : Container(
-                    color: Colors.black,
+                : Image.network(
+                    widget.videoData.thumbnailUrl,
+                    fit: BoxFit.cover,
                   ),
           ),
           Positioned.fill(
@@ -192,15 +194,15 @@ class VideoPostState extends ConsumerState<VideoPost>
               ),
             ),
           ),
-          const Positioned(
+          Positioned(
             bottom: 20,
             left: 10,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "@헌남",
-                  style: TextStyle(
+                  "@${widget.videoData.creator}",
+                  style: const TextStyle(
                     fontSize: Sizes.size20,
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
@@ -208,8 +210,8 @@ class VideoPostState extends ConsumerState<VideoPost>
                 ),
                 Gaps.v10,
                 Text(
-                  "This is my house is suoth korea!!!",
-                  style: TextStyle(
+                  widget.videoData.description,
+                  style: const TextStyle(
                     fontSize: Sizes.size16,
                     color: Colors.white,
                   ),
@@ -236,24 +238,31 @@ class VideoPostState extends ConsumerState<VideoPost>
             right: 10,
             child: Column(
               children: [
-                const CircleAvatar(
+                CircleAvatar(
                   radius: 25,
                   backgroundColor: Colors.black,
                   foregroundColor: Colors.white,
-                  foregroundImage: NetworkImage(avatarUri),
-                  child: Text("헌남"),
+                  foregroundImage: NetworkImage(
+                      ref.watch(usersProvider).value?.avatarURL ?? ""),
+                  child: Text(
+                    widget.videoData.creator,
+                  ),
                 ),
                 Gaps.v24,
                 VideoButton(
                   icon: FontAwesomeIcons.solidHeart,
-                  text: S.of(context).likeCount(87491),
+                  text: S.of(context).likeCount(
+                        widget.videoData.likes,
+                      ),
                 ),
                 Gaps.v24,
                 GestureDetector(
                   onTap: () => _onCommentTap(context),
                   child: VideoButton(
                     icon: FontAwesomeIcons.solidComment,
-                    text: S.of(context).commentCount(13243),
+                    text: S.of(context).commentCount(
+                          widget.videoData.comments,
+                        ),
                   ),
                 ),
                 Gaps.v24,
