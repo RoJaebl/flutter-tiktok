@@ -4,12 +4,12 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:tiktok_clone/constants/breakpoints.dart';
 import 'package:tiktok_clone/constants/gaps.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
-import 'package:tiktok_clone/features/settings/view/settings_profile_screen.dart';
-import 'package:tiktok_clone/features/settings/view/settings_screen.dart';
-import 'package:tiktok_clone/features/users/view/widgets/avatar.dart';
+import 'package:tiktok_clone/features/settings/views/settings_profile_screen.dart';
+import 'package:tiktok_clone/features/settings/views/settings_screen.dart';
+import 'package:tiktok_clone/features/users/views/widgets/avatar.dart';
 import 'package:tiktok_clone/features/users/view_models/users_view_model.dart';
-import 'package:tiktok_clone/features/users/view/widgets/persistent_tab_bar.dart';
-import 'package:tiktok_clone/features/users/view/widgets/super_start_box.dart';
+import 'package:tiktok_clone/features/users/views/widgets/persistent_tab_bar.dart';
+import 'package:tiktok_clone/features/users/views/widgets/super_start_box.dart';
 import 'package:tiktok_clone/common/shared/slide_route.dart';
 
 class UserProfileScreen extends ConsumerStatefulWidget {

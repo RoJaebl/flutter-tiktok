@@ -194,8 +194,9 @@ class VideoPostState extends ConsumerState<VideoPost>
                         ),
                         child: AnimatedOpacity(
                           duration: _animationDuration,
-                          opacity:
-                              ref.watch(videoPostProvider).paused! ? 0.8 : 0,
+                          opacity: ref.watch(videoPostProvider).paused == null
+                              ? 0.8
+                              : 0,
                           child: const FaIcon(
                             FontAwesomeIcons.play,
                             color: Colors.white,

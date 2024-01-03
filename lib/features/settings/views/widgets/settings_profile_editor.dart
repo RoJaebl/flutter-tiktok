@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tiktok_clone/common/shared/slide_route.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
-import 'package:tiktok_clone/features/settings/view/widgets/settings_profile_editor_detail.dart';
+import 'package:tiktok_clone/features/settings/views/widgets/settings_profile_editor_detail.dart';
 import 'package:tiktok_clone/features/settings/view_models/setting_profile_view_model.dart';
 
 class ProfileEditor extends ConsumerWidget {
