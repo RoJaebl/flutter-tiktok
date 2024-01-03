@@ -19,6 +19,7 @@ export const onVideoCreated = functions.firestore
       "scale=150:-1", // 스케일을 너비 150, 높이는 그에 맞추어 비유을 조정한다.
       `/tmp/${snapshot.id}.jpg`, // 해당 이름으로 파일을 저장한다.
     ]);
+
     const storage = admin.storage();
     const [file, _] = await storage.bucket().upload(`/tmp/${snapshot.id}.jpg`, {
       // 구글 클라우드 서버에 저장된 영상을 업로드 한다.
@@ -27,6 +28,7 @@ export const onVideoCreated = functions.firestore
     await file.makePublic(); // 업로드한 영상을 공개로 설정한다.
     await snapshot.ref.update({ thumbnailUrl: file.publicUrl() }); // 공개로 설정된 영상의 URL를 업데이트 한다.
     const db = admin.firestore();
+    await db.collection("videos").doc(snapshot.id).update({ id: snapshot.id });
     await db
       .collection("users")
       .doc(video.creatorUid)
