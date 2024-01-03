@@ -72,8 +72,8 @@ class VideoPostState extends ConsumerState<VideoPost>
     // });
   }
 
-  void _onLikeTap() {
-    ref.read(videoPostsProvider(widget.videoData.id).notifier).likeVideo();
+  void _onToggleLikeTap() {
+    ref.read(videoPostsProvider(widget.videoData).notifier).likeVideo();
   }
 
   /// Player를 초기화 및 이벤트 등록
@@ -121,7 +121,7 @@ class VideoPostState extends ConsumerState<VideoPost>
   }
 
   void _onTogglePause() async {
-    _isPaused = !ref.read(videoPostProvider).paused;
+    _isPaused = !ref.read(videoPostProvider).paused!;
     ref.read(videoPostProvider.notifier).setPaused(_isPaused);
     _isPaused = !_isPaused;
     _isPaused ? _animationController.reverse() : _animationController.forward();
@@ -152,131 +152,149 @@ class VideoPostState extends ConsumerState<VideoPost>
 
   @override
   Widget build(BuildContext context) {
-    return VisibilityDetector(
-      key: Key("${widget.index}"),
-      onVisibilityChanged: _onVisibilityChanged,
-      child: Stack(
-        children: [
-          Positioned.fill(
-            child: _videoPlayercontroller.value.isInitialized
-                ? VideoPlayer(_videoPlayercontroller)
-                : Image.network(
-                    widget.videoData.thumbnailUrl,
-                    fit: BoxFit.cover,
-                  ),
+    return ref.watch(videoPostsProvider(widget.videoData)).when(
+          loading: () => const Center(
+            child: CircularProgressIndicator(),
           ),
-          Positioned.fill(
-            child: GestureDetector(
-              onTap: _onTogglePause,
-              onDoubleTap: _onToggleMute,
+          error: (error, stackTrace) => Center(
+            child: Text(
+              "Could not load videos: $error",
+              style: const TextStyle(
+                color: Color.fromARGB(255, 70, 59, 59),
+              ),
             ),
           ),
-          Positioned.fill(
-            child: IgnorePointer(
-              child: Center(
-                child: AnimatedBuilder(
-                  animation: _animationController,
-                  builder: (context, child) => Transform.scale(
-                    scale: _animationController.value,
-                    child: child,
+          data: (data) => VisibilityDetector(
+            key: Key("${widget.index}"),
+            onVisibilityChanged: _onVisibilityChanged,
+            child: Stack(
+              children: [
+                Positioned.fill(
+                  child: _videoPlayercontroller.value.isInitialized
+                      ? VideoPlayer(_videoPlayercontroller)
+                      : Image.network(
+                          widget.videoData.thumbnailUrl,
+                          fit: BoxFit.cover,
+                        ),
+                ),
+                Positioned.fill(
+                  child: GestureDetector(
+                    onTap: _onTogglePause,
+                    onDoubleTap: _onToggleMute,
                   ),
-                  child: AnimatedOpacity(
-                    duration: _animationDuration,
-                    opacity: ref.watch(videoPostProvider).paused ? 0.8 : 0,
-                    child: const FaIcon(
-                      FontAwesomeIcons.play,
-                      color: Colors.white,
-                      size: Sizes.size52,
+                ),
+                Positioned.fill(
+                  child: IgnorePointer(
+                    child: Center(
+                      child: AnimatedBuilder(
+                        animation: _animationController,
+                        builder: (context, child) => Transform.scale(
+                          scale: _animationController.value,
+                          child: child,
+                        ),
+                        child: AnimatedOpacity(
+                          duration: _animationDuration,
+                          opacity:
+                              ref.watch(videoPostProvider).paused! ? 0.8 : 0,
+                          child: const FaIcon(
+                            FontAwesomeIcons.play,
+                            color: Colors.white,
+                            size: Sizes.size52,
+                          ),
+                        ),
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ),
-          ),
-          Positioned(
-            bottom: 20,
-            left: 10,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "@${widget.videoData.creator}",
-                  style: const TextStyle(
-                    fontSize: Sizes.size20,
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
+                Positioned(
+                  bottom: 20,
+                  left: 10,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "@${widget.videoData.creator}",
+                        style: const TextStyle(
+                          fontSize: Sizes.size20,
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Gaps.v10,
+                      Text(
+                        widget.videoData.description,
+                        style: const TextStyle(
+                          fontSize: Sizes.size16,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                Gaps.v10,
-                Text(
-                  widget.videoData.description,
-                  style: const TextStyle(
-                    fontSize: Sizes.size16,
-                    color: Colors.white,
+                Positioned(
+                  left: 20,
+                  top: 40,
+                  child: IconButton(
+                    icon: FaIcon(
+                      _isMute
+                          ? FontAwesomeIcons.volumeOff
+                          : FontAwesomeIcons.volumeHigh,
+                      color: Colors.white,
+                    ),
+                    onPressed: _onToggleMute,
+                    // onPressed: context.read<VideoConfig>().toggleIsMuted,
+                  ),
+                ),
+                Positioned(
+                  bottom: 20,
+                  right: 10,
+                  child: Column(
+                    children: [
+                      CircleAvatar(
+                        radius: 25,
+                        backgroundColor: Colors.black,
+                        foregroundColor: Colors.white,
+                        foregroundImage: NetworkImage(
+                            ref.watch(usersProvider).value?.avatarURL ?? ""),
+                        child: Text(
+                          widget.videoData.creator,
+                        ),
+                      ),
+                      Gaps.v24,
+                      GestureDetector(
+                        onTap: _onToggleLikeTap,
+                        child: VideoButton(
+                          icon: FontAwesomeIcons.solidHeart,
+                          color:
+                              data.isLike ? Colors.red.shade300 : Colors.white,
+                          text: S.of(context).likeCount(
+                                data.video!.likes,
+                              ),
+                        ),
+                      ),
+                      Gaps.v24,
+                      GestureDetector(
+                        onTap: () => _onCommentTap(context),
+                        child: VideoButton(
+                          icon: FontAwesomeIcons.solidComment,
+                          color: Colors.white,
+                          text: S.of(context).commentCount(
+                                widget.videoData.comments,
+                              ),
+                        ),
+                      ),
+                      Gaps.v24,
+                      const VideoButton(
+                        icon: FontAwesomeIcons.share,
+                        color: Colors.white,
+                        text: "Share",
+                      ),
+                    ],
                   ),
                 ),
               ],
             ),
           ),
-          Positioned(
-            left: 20,
-            top: 40,
-            child: IconButton(
-              icon: FaIcon(
-                _isMute
-                    ? FontAwesomeIcons.volumeOff
-                    : FontAwesomeIcons.volumeHigh,
-                color: Colors.white,
-              ),
-              onPressed: _onToggleMute,
-              // onPressed: context.read<VideoConfig>().toggleIsMuted,
-            ),
-          ),
-          Positioned(
-            bottom: 20,
-            right: 10,
-            child: Column(
-              children: [
-                CircleAvatar(
-                  radius: 25,
-                  backgroundColor: Colors.black,
-                  foregroundColor: Colors.white,
-                  foregroundImage: NetworkImage(
-                      ref.watch(usersProvider).value?.avatarURL ?? ""),
-                  child: Text(
-                    widget.videoData.creator,
-                  ),
-                ),
-                Gaps.v24,
-                GestureDetector(
-                  onTap: _onLikeTap,
-                  child: VideoButton(
-                    icon: FontAwesomeIcons.solidHeart,
-                    text: S.of(context).likeCount(
-                          widget.videoData.likes,
-                        ),
-                  ),
-                ),
-                Gaps.v24,
-                GestureDetector(
-                  onTap: () => _onCommentTap(context),
-                  child: VideoButton(
-                    icon: FontAwesomeIcons.solidComment,
-                    text: S.of(context).commentCount(
-                          widget.videoData.comments,
-                        ),
-                  ),
-                ),
-                Gaps.v24,
-                const VideoButton(
-                  icon: FontAwesomeIcons.share,
-                  text: "Share",
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
+        );
   }
 }

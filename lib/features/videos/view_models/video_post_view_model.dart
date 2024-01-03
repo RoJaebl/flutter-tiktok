@@ -18,7 +18,9 @@ class VideoPostViewModel extends Notifier<VideoPostModel> {
 
   @override
   VideoPostModel build() {
-    return VideoPostModel(paused: false);
+    return VideoPostModel(
+      isLike: false,
+    );
   }
 }
 

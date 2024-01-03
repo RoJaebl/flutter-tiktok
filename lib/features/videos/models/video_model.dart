@@ -50,4 +50,24 @@ class VideoModel {
       "id": id,
     };
   }
+
+  VideoModel copyWith({
+    String? title,
+    String? description,
+    int? likes,
+    int? comments,
+  }) {
+    return VideoModel(
+      id: id,
+      title: title ?? this.title,
+      description: description ?? this.description,
+      fileUrl: fileUrl,
+      thumbnailUrl: thumbnailUrl,
+      creatorUid: creatorUid,
+      likes: likes ?? this.likes,
+      comments: comments ?? this.comments,
+      createdAt: createdAt,
+      creator: creator,
+    );
+  }
 }
