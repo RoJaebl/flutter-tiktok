@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:tiktok_clone/constants/gaps.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
 import 'package:tiktok_clone/common/shared/slide_route.dart';
+import 'package:tiktok_clone/features/inbox/view_model/messages_view_model.dart';
 
-class ChatDetailScreen extends StatefulWidget {
+class ChatDetailScreen extends ConsumerStatefulWidget {
   static const String routeName = "chatDetail";
   static const String routeURL = ":chatId";
 
@@ -16,10 +18,10 @@ class ChatDetailScreen extends StatefulWidget {
   });
 
   @override
-  State<ChatDetailScreen> createState() => _ChatDetailScreenState();
+  ConsumerState<ChatDetailScreen> createState() => _ChatDetailScreenState();
 }
 
-class _ChatDetailScreenState extends State<ChatDetailScreen> {
+class _ChatDetailScreenState extends ConsumerState<ChatDetailScreen> {
   final TextEditingController _textEditingController = TextEditingController();
 
   @override
@@ -29,15 +31,19 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
   }
 
   void _onSendTap() {
-    _textEditingController.text.isNotEmpty
-        ? _textEditingController.clear()
-        : null;
+    final text = _textEditingController.text;
+    if (text == "") {
+      return;
+    }
+    ref.read(messagesProvider.notifier).sendMessage(text);
+    _textEditingController.clear();
   }
 
   void _onUnFocusTap() => FocusScope.of(context).unfocus();
 
   @override
   Widget build(BuildContext context) {
+    final isLoading = ref.watch(messagesProvider).isLoading;
     return Scaffold(
       appBar: AppBar(
         title: GestureDetector(
@@ -105,54 +111,54 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
           GestureDetector(
             onTap: _onUnFocusTap,
             child: ListView.separated(
-                padding: const EdgeInsets.symmetric(
-                  vertical: Sizes.size20,
-                  horizontal: Sizes.size14,
-                ),
-                itemBuilder: (context, index) {
-                  final isMine = index % 2 == 0;
+              padding: const EdgeInsets.symmetric(
+                vertical: Sizes.size20,
+                horizontal: Sizes.size14,
+              ),
+              itemCount: 10,
+              itemBuilder: (context, index) {
+                final isMine = index % 2 == 0;
 
-                  return Row(
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: isMine
-                        ? MainAxisAlignment.end
-                        : MainAxisAlignment.start,
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(
-                          Sizes.size14,
-                        ),
-                        decoration: BoxDecoration(
-                          color: isMine
-                              ? Colors.blue
-                              : Theme.of(context).primaryColor,
-                          borderRadius: BorderRadius.only(
-                            topLeft: const Radius.circular(
-                              Sizes.size20,
-                            ),
-                            topRight: const Radius.circular(
-                              Sizes.size20,
-                            ),
-                            bottomLeft: Radius.circular(
-                              isMine ? Sizes.size20 : Sizes.size5,
-                            ),
-                            bottomRight: Radius.circular(
-                                !isMine ? Sizes.size20 : Sizes.size5),
+                return Row(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment:
+                      isMine ? MainAxisAlignment.end : MainAxisAlignment.start,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(
+                        Sizes.size14,
+                      ),
+                      decoration: BoxDecoration(
+                        color: isMine
+                            ? Colors.blue
+                            : Theme.of(context).primaryColor,
+                        borderRadius: BorderRadius.only(
+                          topLeft: const Radius.circular(
+                            Sizes.size20,
                           ),
-                        ),
-                        child: const Text(
-                          "this is a message!",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: Sizes.size16,
+                          topRight: const Radius.circular(
+                            Sizes.size20,
                           ),
+                          bottomLeft: Radius.circular(
+                            isMine ? Sizes.size20 : Sizes.size5,
+                          ),
+                          bottomRight: Radius.circular(
+                              !isMine ? Sizes.size20 : Sizes.size5),
                         ),
                       ),
-                    ],
-                  );
-                },
-                separatorBuilder: (context, index) => Gaps.v10,
-                itemCount: 10),
+                      child: const Text(
+                        "this is a message!",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: Sizes.size16,
+                        ),
+                      ),
+                    ),
+                  ],
+                );
+              },
+              separatorBuilder: (context, index) => Gaps.v10,
+            ),
           ),
           Positioned(
             bottom: 0,
@@ -204,7 +210,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                   ),
                   Gaps.h14,
                   GestureDetector(
-                    onTap: _onSendTap,
+                    onTap: isLoading ? null : _onSendTap,
                     child: Container(
                       height: Sizes.size40,
                       width: Sizes.size40,
@@ -214,9 +220,11 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                             ? Colors.grey.shade800
                             : Colors.grey.shade400,
                       ),
-                      child: const Center(
+                      child: Center(
                         child: FaIcon(
-                          FontAwesomeIcons.solidPaperPlane,
+                          isLoading
+                              ? FontAwesomeIcons.hourglass
+                              : FontAwesomeIcons.solidPaperPlane,
                           color: Colors.white,
                           size: Sizes.size18,
                         ),
