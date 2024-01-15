@@ -46,6 +46,7 @@ class UploadVideosViweModel extends AsyncNotifier<void> {
           }
         },
       );
+      if (!context.mounted) return;
       context.pop();
       context.pop();
     }

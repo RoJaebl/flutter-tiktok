@@ -47,14 +47,14 @@ class VideoPostState extends ConsumerState<VideoPost>
   late final AnimationController _animationController;
 
   /// Player가 초기화 되고 영상을 마치면 다음 페이지 콜백
-  void _onVideoChange() {
-    if (_videoPlayercontroller.value.isInitialized) {
-      if (_videoPlayercontroller.value.duration ==
-          _videoPlayercontroller.value.position) {
-        widget.onVideoFinished();
-      }
-    }
-  }
+  // void _onVideoChange() {
+  //   if (_videoPlayercontroller.value.isInitialized) {
+  //     if (_videoPlayercontroller.value.duration ==
+  //         _videoPlayercontroller.value.position) {
+  //       widget.onVideoFinished();
+  //     }
+  //   }
+  // }
 
   void _initAnimation() {
     _animationController = AnimationController(

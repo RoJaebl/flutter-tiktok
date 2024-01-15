@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:tiktok_clone/common/widgets/theme_configuration/theme_config.dart';
+import 'package:tiktok_clone/common/views/widgets/theme_configuration/theme_config.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
 
 class PersistentTabBar extends SliverPersistentHeaderDelegate {

@@ -24,6 +24,13 @@ class UsersViewModel extends AsyncNotifier<UserProfileModel> {
     return UserProfileModel.empty();
   }
 
+  Future<UserProfileModel> findProfile({
+    required String userId,
+  }) async {
+    final json = await _usersRepo.findProfile(userId);
+    return UserProfileModel.fromJson(json!);
+  }
+
   Future<void> createProfile(
       UserCredential credential, Map<dynamic, dynamic> userForm) async {
     if (credential.user == null) throw Exception("Account not created");
@@ -72,18 +79,16 @@ class UsersViewModel extends AsyncNotifier<UserProfileModel> {
     String? avatarURL,
   }) async {
     if (state.value == null) return;
-    state = AsyncValue.data(
-      state.value!.copyWith(
-        uid: uid ?? state.value!.uid,
-        email: email ?? state.value!.email,
-        name: name ?? state.value!.name,
-        bio: bio ?? state.value!.bio,
-        link: link ?? state.value!.link,
-        birthday: birthday ?? state.value!.birthday,
-        hasAvatar: hasAvatar ?? state.value!.hasAvatar,
-        avatarURL: avatarURL ?? state.value!.avatarURL,
-      ),
-    );
+    state = AsyncValue.data(state.value!.copyWith(
+      uid: uid ?? state.value!.uid,
+      email: email ?? state.value!.email,
+      name: name ?? state.value!.name,
+      bio: bio ?? state.value!.bio,
+      link: link ?? state.value!.link,
+      birthday: birthday ?? state.value!.birthday,
+      hasAvatar: hasAvatar ?? state.value!.hasAvatar,
+      avatarURL: avatarURL ?? state.value!.avatarURL,
+    ));
     await _usersRepo.updateUser(
       state.value!.uid,
       state.value!.toJson(),

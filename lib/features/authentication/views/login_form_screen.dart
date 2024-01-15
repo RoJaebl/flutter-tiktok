@@ -27,9 +27,8 @@ class _LoginFormScreenState extends ConsumerState<LoginFormScreen> {
             );
       }
     }
+    FocusScope.of(context).unfocus();
   }
-
-  void _onScaffoldTap() => FocusScope.of(context).unfocus();
 
   @override
   Widget build(BuildContext context) {

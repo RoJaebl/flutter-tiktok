@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
-import 'package:tiktok_clone/common/widgets/theme_configuration/theme_config.dart';
+import 'package:tiktok_clone/common/views/widgets/theme_configuration/theme_config.dart';
 import 'package:tiktok_clone/features/authentication/repos/authentication_repo.dart';
 import 'package:tiktok_clone/features/videos/view_models/playback_config_vm.dart';
 
@@ -83,23 +83,17 @@ class SettingScreen extends ConsumerWidget {
                     ),
                     ListTile(
                       onTap: () async {
-                        final date = await showDatePicker(
+                        await showDatePicker(
                           context: context,
                           initialDate: DateTime.now(),
                           firstDate: DateTime(1980),
                           lastDate: DateTime(2030),
                         );
-                        if (kDebugMode) {
-                          print(date);
-                        }
-                        final time = await showTimePicker(
+                        await showTimePicker(
                           context: context,
                           initialTime: TimeOfDay.now(),
                         );
-                        if (kDebugMode) {
-                          print(time);
-                        }
-                        final booking = await showDateRangePicker(
+                        await showDateRangePicker(
                           context: context,
                           firstDate: DateTime(1980),
                           lastDate: DateTime(2030),
@@ -115,9 +109,6 @@ class SettingScreen extends ConsumerWidget {
                             );
                           },
                         );
-                        if (kDebugMode) {
-                          print(booking);
-                        }
                       },
                       title: const Text(
                         "What is your birthday?",

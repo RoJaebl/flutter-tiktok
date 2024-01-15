@@ -49,8 +49,12 @@ class Avatar extends ConsumerWidget {
             )
           : CircleAvatar(
               radius: 50,
-              foregroundImage: hasAvatar ? NetworkImage(avatarURL) : null,
-              child: Text(name),
+              foregroundImage: hasAvatar
+                  ? NetworkImage(
+                      avatarURL,
+                    )
+                  : null,
+              child: hasAvatar ? null : Text(name),
             ),
     );
   }
