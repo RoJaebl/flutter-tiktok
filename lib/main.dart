@@ -5,8 +5,9 @@ import 'package:flutter/services.dart';
 
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:relative_time/relative_time.dart';
 
-import 'package:tiktok_clone/common/widgets/theme_configuration/theme_config.dart';
+import 'package:tiktok_clone/common/views/widgets/theme_configuration/theme_config.dart';
 
 import 'package:tiktok_clone/constants/sizes.dart';
 import 'package:tiktok_clone/firebase_options.dart';
@@ -48,6 +49,8 @@ class TikTokApp extends ConsumerWidget {
         themeMode: value ? ThemeMode.light : ThemeMode.dark,
         localizationsDelegates: const [
           S.delegate,
+          AppLocalizationDelegate(),
+          RelativeTimeLocalizations.delegate,
           GlobalCupertinoLocalizations.delegate,
           GlobalMaterialLocalizations.delegate,
           GlobalWidgetsLocalizations.delegate,

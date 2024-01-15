@@ -78,3 +78,12 @@ export const onLikedRemoved = functions.firestore
 
     await query.delete();
   });
+// export const onCreateChatRoom = functions.firestore
+//   .document("chat_rooms/{roomId}")
+//   .onCreate(async (snapshot, context) => {
+//     const db = admin.firestore();
+//     const chatRoomId = snapshot.id;
+//     const doc = db.collection("chat_rooms").doc(chatRoomId);
+
+//     await doc.update({ chatRoomId: chatRoomId });
+//   });

@@ -1,21 +1,37 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:go_router/go_router.dart';
 import 'package:tiktok_clone/constants/gaps.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
-import 'package:tiktok_clone/common/shared/slide_route.dart';
-import 'package:tiktok_clone/features/authentication/repos/authentication_repo.dart';
+import 'package:tiktok_clone/features/inbox/models/chat_room_model.dart';
+import 'package:tiktok_clone/features/inbox/models/message.dart';
 import 'package:tiktok_clone/features/inbox/view_model/messages_view_model.dart';
+import 'package:tiktok_clone/features/inbox/views/chats_screen.dart';
+import 'package:tiktok_clone/features/users/models/user_profile_model.dart';
+import 'package:tiktok_clone/features/users/view_models/users_view_model.dart';
+
+class ChatDetailScreenExtra {
+  final ChatModel chat;
+  final UserProfileModel otherUser;
+
+  ChatDetailScreenExtra({
+    required this.chat,
+    required this.otherUser,
+  });
+}
 
 class ChatDetailScreen extends ConsumerStatefulWidget {
   static const String routeName = "chatDetail";
   static const String routeURL = ":chatId";
 
   final String chatId;
+  final ChatDetailScreenExtra extra;
 
   const ChatDetailScreen({
     super.key,
     required this.chatId,
+    required this.extra,
   });
 
   @override
@@ -32,21 +48,80 @@ class _ChatDetailScreenState extends ConsumerState<ChatDetailScreen> {
   }
 
   void _onSendTap() {
-    final text = _textEditingController.text;
-    if (text == "") {
-      return;
+    if (_textEditingController.text != "") {
+      ref
+          .read(messagesProvider(widget.chatId).notifier)
+          .sendMessage(_textEditingController.text);
+      _textEditingController.clear();
     }
-    ref.read(messagesProvider.notifier).sendMessage(text);
-    _textEditingController.clear();
   }
 
   void _onUnFocusTap() => FocusScope.of(context).unfocus();
 
+  void _onBackPressed() => context.goNamed(ChatsScreen.routeName);
+
+  Future<void> _onMessageDeleteLongPressed(
+      {required MessageModel message}) async {
+    void onDeletePressed() {
+      final lastTime =
+          DateTime.now().millisecondsSinceEpoch - message.createdAt;
+      final limitTime = const Duration(minutes: 2).inMilliseconds;
+      if (limitTime < lastTime) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              "삭제 제한 시간을 초과 하였습니다.",
+            ),
+          ),
+        );
+        Navigator.of(context).pop();
+      } else {
+        ref.read(messagesProvider(widget.chatId).notifier).updateMessage(
+              textId: message.textId,
+              delete: true,
+            );
+      }
+    }
+
+    await showDialog(
+        context: context,
+        builder: (context) {
+          final user = ref.read(usersProvider).value!;
+          return AlertDialog.adaptive(
+            title: Text(
+              user.name,
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
+            actions: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  TextButton(
+                    onPressed: onDeletePressed,
+                    child: const Text(
+                      "메시지 삭제",
+                    ),
+                  ),
+                ],
+              )
+            ],
+          );
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
-    final isLoading = ref.watch(messagesProvider).isLoading;
+    final isLoading = ref.watch(messagesProvider(widget.chatId)).isLoading;
+    final otherUser = widget.extra.otherUser;
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          onPressed: _onBackPressed,
+          icon: const FaIcon(
+            FontAwesomeIcons.arrowLeft,
+            size: Sizes.size20,
+          ),
+        ),
         title: GestureDetector(
           onTap: _onUnFocusTap,
           child: ListTile(
@@ -54,12 +129,16 @@ class _ChatDetailScreenState extends ConsumerState<ChatDetailScreen> {
             horizontalTitleGap: Sizes.size8,
             leading: Stack(
               children: [
-                const CircleAvatar(
+                CircleAvatar(
                   radius: Sizes.size24,
-                  foregroundImage: NetworkImage(nikoaAvatarUri),
-                  child: Text(
-                    "니꼬",
+                  foregroundImage: NetworkImage(
+                    otherUser.avatarURL,
                   ),
+                  child: otherUser.hasAvatar
+                      ? null
+                      : Text(
+                          otherUser.name,
+                        ),
                 ),
                 Positioned(
                   left: Sizes.size32,
@@ -80,13 +159,10 @@ class _ChatDetailScreenState extends ConsumerState<ChatDetailScreen> {
               ],
             ),
             title: Text(
-              "니꼬 (${widget.chatId})",
+              otherUser.name,
               style: const TextStyle(
                 fontWeight: FontWeight.w600,
               ),
-            ),
-            subtitle: const Text(
-              "Active now",
             ),
             trailing: const Row(
               mainAxisSize: MainAxisSize.min,
@@ -111,8 +187,11 @@ class _ChatDetailScreenState extends ConsumerState<ChatDetailScreen> {
         children: [
           GestureDetector(
             onTap: _onUnFocusTap,
-            child: ref.watch(chatProvider).when(
+            child: ref.watch(chatProvider(widget.chatId)).when(
                   data: (data) {
+                    if (data.isEmpty) {
+                      return const Center(child: Text("대화를 시작하세요!"));
+                    }
                     return ListView.separated(
                       reverse: true,
                       padding: EdgeInsets.only(
@@ -125,46 +204,56 @@ class _ChatDetailScreenState extends ConsumerState<ChatDetailScreen> {
                       itemCount: data.length,
                       itemBuilder: (context, index) {
                         final message = data[index];
-                        final isMine =
-                            message.userId == ref.watch(authRepo).user!.uid;
+                        final isMine = message.userId ==
+                            ref.read(usersProvider).value!.uid;
+                        final isNotDeleted = !data[index].isDeleted;
 
-                        return Row(
-                          mainAxisSize: MainAxisSize.min,
-                          mainAxisAlignment: isMine
-                              ? MainAxisAlignment.end
-                              : MainAxisAlignment.start,
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.all(
-                                Sizes.size14,
-                              ),
-                              decoration: BoxDecoration(
-                                color: isMine
-                                    ? Colors.blue
-                                    : Theme.of(context).primaryColor,
-                                borderRadius: BorderRadius.only(
-                                  topLeft: const Radius.circular(
-                                    Sizes.size20,
+                        return GestureDetector(
+                          onLongPress: isMine && isNotDeleted
+                              ? () => _onMessageDeleteLongPressed(
+                                    message: data[index],
+                                  )
+                              : null,
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: isMine
+                                ? MainAxisAlignment.end
+                                : MainAxisAlignment.start,
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.all(
+                                  Sizes.size14,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: isMine
+                                      ? Colors.blue
+                                      : Theme.of(context).primaryColor,
+                                  borderRadius: BorderRadius.only(
+                                    topLeft: const Radius.circular(
+                                      Sizes.size20,
+                                    ),
+                                    topRight: const Radius.circular(
+                                      Sizes.size20,
+                                    ),
+                                    bottomLeft: Radius.circular(
+                                      isMine ? Sizes.size20 : Sizes.size5,
+                                    ),
+                                    bottomRight: Radius.circular(
+                                        !isMine ? Sizes.size20 : Sizes.size5),
                                   ),
-                                  topRight: const Radius.circular(
-                                    Sizes.size20,
+                                ),
+                                child: Text(
+                                  message.isDeleted
+                                      ? "[삭제된 메세지]"
+                                      : message.text,
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: Sizes.size16,
                                   ),
-                                  bottomLeft: Radius.circular(
-                                    isMine ? Sizes.size20 : Sizes.size5,
-                                  ),
-                                  bottomRight: Radius.circular(
-                                      !isMine ? Sizes.size20 : Sizes.size5),
                                 ),
                               ),
-                              child: Text(
-                                message.text,
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: Sizes.size16,
-                                ),
-                              ),
-                            ),
-                          ],
+                            ],
+                          ),
                         );
                       },
                       separatorBuilder: (context, index) => Gaps.v10,
@@ -212,8 +301,9 @@ class _ChatDetailScreenState extends ConsumerState<ChatDetailScreen> {
                             horizontal: Sizes.size12,
                           ),
                           suffixIcon: Padding(
-                            padding:
-                                EdgeInsets.symmetric(horizontal: Sizes.size10),
+                            padding: EdgeInsets.symmetric(
+                              horizontal: Sizes.size10,
+                            ),
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
