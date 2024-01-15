@@ -10,6 +10,7 @@ import 'package:relative_time/relative_time.dart';
 import 'package:tiktok_clone/common/views/widgets/theme_configuration/theme_config.dart';
 
 import 'package:tiktok_clone/constants/sizes.dart';
+import 'package:tiktok_clone/features/notification/notifications_provider.dart';
 import 'package:tiktok_clone/firebase_options.dart';
 import 'package:tiktok_clone/generated/l10n.dart';
 import 'package:tiktok_clone/router.dart';
@@ -39,7 +40,7 @@ class TikTokApp extends ConsumerWidget {
   const TikTokApp({super.key});
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // S.load(const Locale("en"));
+    ref.watch(notificationsProvider);
     return ValueListenableBuilder(
       valueListenable: lightTheme,
       builder: (context, value, child) => MaterialApp.router(
