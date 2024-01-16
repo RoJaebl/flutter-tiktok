@@ -47,6 +47,26 @@ export const onLikedCreated = functions.firestore
       .doc(videoId)
       .update({ likes: admin.firestore.FieldValue.increment(1) });
 
+    const video = await (
+      await db.collection("videos").doc(videoId).get()
+    ).data();
+    if (video) {
+      const creatorUid = video.creatorUid;
+      const user = (await db.collection("users").doc(creatorUid).get()).data();
+      if (user) {
+        const token = user.token;
+        await admin.messaging().send({
+          token: token,
+          data: {
+            screen: "123",
+          },
+          notification: {
+            title: "someone liked you video",
+            body: "Likes + 1 ! Congrats! ❤",
+          },
+        });
+      }
+    }
     const thumbnailUrl = (
       await db.collection("videos").doc(videoId).get()
     ).data()!.thumbnailUrl;
@@ -78,12 +98,3 @@ export const onLikedRemoved = functions.firestore
 
     await query.delete();
   });
-// export const onCreateChatRoom = functions.firestore
-//   .document("chat_rooms/{roomId}")
-//   .onCreate(async (snapshot, context) => {
-//     const db = admin.firestore();
-//     const chatRoomId = snapshot.id;
-//     const doc = db.collection("chat_rooms").doc(chatRoomId);
-
-//     await doc.update({ chatRoomId: chatRoomId });
-//   });
