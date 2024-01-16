@@ -40,7 +40,6 @@ class TikTokApp extends ConsumerWidget {
   const TikTokApp({super.key});
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    ref.watch(notificationsProvider);
     return ValueListenableBuilder(
       valueListenable: lightTheme,
       builder: (context, value, child) => MaterialApp.router(
