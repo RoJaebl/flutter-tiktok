@@ -37,9 +37,10 @@ class SignUpScreen extends StatelessWidget {
               child: Column(
                 children: [
                   Gaps.v80,
-                  Text(
-                    S.of(context).signUpTitle("TikTok"),
-                    style: const TextStyle(
+                  const Text(
+                    "Sign up for TikTok",
+                    // S.of(context).signUpTitle("TikTok"),
+                    style: TextStyle(
                       fontSize: Sizes.size24,
                       fontWeight: FontWeight.w700,
                     ),
@@ -58,7 +59,8 @@ class SignUpScreen extends StatelessWidget {
                     AuthButton(
                       onTap: () => _onEmailTap(context),
                       icon: const FaIcon(FontAwesomeIcons.user),
-                      text: S.of(context).emailPasswordButton,
+                      text: "Use email & password",
+                      // text: S.of(context).emailPasswordButton,
                     ),
                     Gaps.v16,
                     AuthButton(
@@ -106,7 +108,8 @@ class SignUpScreen extends StatelessWidget {
                   GestureDetector(
                     onTap: () => _onLoginTap(context),
                     child: Text(
-                      S.of(context).logIn("female"),
+                      "Log in",
+                      // S.of(context).logIn("female"),
                       style: TextStyle(
                           color: Theme.of(context).primaryColor,
                           fontWeight: FontWeight.w700),
